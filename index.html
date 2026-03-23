@@ -8,23 +8,24 @@ import {
 
 /**
  * @project 外木山異世界公會：開拓者終端 (Waimushan Guild: Pioneer Terminal)
- * @version 4.0.1 - Bug Fix & Stability Update
+ * @version 4.1.0 - Full Asset Delivery
  * @author 嘿路島民工作室 (Island Dwellers Studio)
+ * @description 整合 10 大開拓任務、考古手冊與數位報名契約系統。
  */
 
-// --- 數位資產配置 ---
+// --- 數位資產配置 (請務必在部署時填入 API Key 以啟動智慧引擎) ---
 const ASSETS = {
   GEMINI_API_KEY: "", 
   NOTE1_URL: "https://lh3.googleusercontent.com/pw/AP1GczOh6UM5xoF2DbVYVEUzgQRcmJZYoJS3zHxhOJSebkH-h_sZHKe-3YJ43Qxrwj9o4jGcXdAnEQPv5xH_MopodGids_3hK8uTUpgE6uwnpev80ZL_ecDj6q_EBP8HTwrTJPiz2dFSiDfFXr54RU-NTLs=w627-h903-no-gm?authuser=0",
   NOTE2_URL: "https://lh3.googleusercontent.com/pw/AP1GczPUdBs6ho4QcamRLlPhW8AgmiYGHjswJLJJSMCtmQ8QVdccem5h_sVsbeA7OTFVkO5JgwbBt9ZIHKRY3OkdAwzhbyc4RDbjJ1ryuqU01zOGEe1FZgFkle-BGvvhTAUd_lvHd0qsS7E9-5Oy3bzI2vE=w636-h903-no-gm?authuser=0"
 };
 
-// 視覺風格常量 (移至外層以修復 ReferenceError)
+// 視覺風格常量 (Global Style Tokens)
 const parchmentBg = "bg-[#f4ead5] bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]";
 const neubrutalismShadow = "shadow-[6px_6px_0px_0px_rgba(120,53,15,1)]";
 const neonBlueShadow = "shadow-[0_0_15px_rgba(0,116,217,0.4)]";
 
-// 任務數據庫
+// 數位開拓任務數據庫 (全 10 場次)
 const QUEST_DATA = [
   { id: 'Q1', title: '海岸公民練習曲：沙灘觀察與環境行動', time: '5/2 (六) 09:00-16:30', location: '基隆大武崙沙灘 / 德育校區', rank: 'D', reward: '50 G', type: '公民行動', context: '淨灘、環境紀錄與分析。' },
   { id: 'Q2', title: '海岸變奏曲：氣候變遷與海岸線的故事', time: '5/9 (六) 09:00-12:00', location: '室內教室', rank: 'C', reward: '100 G', type: '環境觀察', context: '氣候變遷對海岸的影響解析。' },
@@ -38,34 +39,52 @@ const QUEST_DATA = [
   { id: 'Q10', title: '海岸治理工作坊：共管機制與協作模擬', time: '7/11 (六) 13:30-16:30', location: '室內教室', rank: 'S', reward: '250 G', type: '政策治理', context: '海岸共管模式與多方協作模擬。' }
 ];
 
-const ParchmentCard = ({ children, className = "" }) => (
+// 報名表單欄位設定
+const REQUIRED_FIELDS = [
+  { label: '姓名', key: 'name', type: 'text', autoComplete: 'name' },
+  { label: '身分證字號', key: 'idNumber', type: 'text' },
+  { label: '聯絡電話', key: 'phone', type: 'tel', autoComplete: 'tel' },
+  { label: 'Email', key: 'email', type: 'email', autoComplete: 'email' },
+];
+
+const OPTIONAL_FIELDS = [
+  { label: '緊急聯絡人姓名', key: 'emergencyName', type: 'text' },
+  { label: '緊急聯絡人電話', key: 'emergencyPhone', type: 'tel' },
+];
+
+// --- 共用視覺組件 ---
+const ParchmentCard = ({ children, className = '' }) => (
   <div className={`relative ${parchmentBg} ${neubrutalismShadow} border-2 border-stone-800 p-6 ${className}`}>
     {children}
   </div>
 );
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState('hall');
+  const [activeTab, setActiveTab] = useState('hall'); 
   const [playerName, setPlayerName] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const [selectedQuest, setSelectedQuest] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [manaStatus, setManaStatus] = useState({ wave: 1.7, wind: 11.9 });
   
+  // AI 與 狀態管理
   const [aiLoading, setAiLoading] = useState(false);
   const [revelation, setRevelation] = useState(null);
   const [questStrategies, setQuestStrategies] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [formErrors, setFormErrors] = useState(null);
   const [imageErrors, setImageErrors] = useState({ note1: false, note2: false });
 
+  // 報名表單資料
   const [formData, setFormData] = useState({
     name: '', gender: '', birthDate: '', idNumber: '', phone: '', email: '', 
     emergencyName: '', emergencyPhone: '', diet: '葷食', medicalInfo: '', 
     agreed: false
   });
 
-  const callGemini = async (prompt, systemPrompt) => {
+  // --- 智慧引擎呼叫 ---
+  const callGemini = useCallback(async (prompt, systemPrompt) => {
     if (!ASSETS.GEMINI_API_KEY) return null;
     try {
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${ASSETS.GEMINI_API_KEY}`, {
@@ -76,49 +95,55 @@ const App = () => {
       const result = await response.json();
       return result.candidates?.[0]?.content?.parts?.[0]?.text;
     } catch (e) { return null; }
-  };
+  }, []);
 
   const getDailyRevelation = async () => {
     setAiLoading(true);
-    const text = await callGemini(`冒險者真名：${playerName}`, "你是一位異世界導師，給予神祕感稱號與海洋格言。");
-    setRevelation(text || "位面同步失敗。");
+    const text = await callGemini(`冒險者：${playerName}`, "你是一位傳奇導師，請給予神祕感十足的 RPG 稱號與鼓勵。");
+    setRevelation(text || "位面訊號不穩定。");
     setAiLoading(false);
   };
 
   const getQuestStrategy = async (quest) => {
-    if (!quest || questStrategies[quest.id]) return;
+    if (questStrategies[quest.id]) return;
     setQuestStrategies(prev => ({ ...prev, [quest.id]: "loading" }));
-    const text = await callGemini(`任務：${quest.title}。內容：${quest.context}`, "撰寫 100 字內異世界風格戰術建議。");
-    setQuestStrategies(prev => ({ ...prev, [quest.id]: text || "偵測中斷。" }));
+    const text = await callGemini(`任務：${quest.title}`, "撰寫一段異世界開拓策略，需結合現實海岸環保知識。");
+    setQuestStrategies(prev => ({ ...prev, [quest.id]: text || "通訊中斷。" }));
   };
 
+  // --- 流程控制 ---
   const handleQuestAccept = (quest) => {
     setSelectedQuest(quest);
-    setFormData(prev => ({ ...prev, name: playerName })); 
+    setFormData(prev => ({ ...prev, name: playerName }));
+    setFormErrors(null);
     setActiveTab('registration');
     window.scrollTo(0, 0);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.idNumber || !formData.phone || !formData.email || !formData.agreed) {
+        setFormErrors("請完整填寫必填項並勾選同意協定。");
+        return;
+    }
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-    }, 2000);
+    await new Promise(r => setTimeout(r, 2000));
+    setIsSubmitting(false);
+    setIsSuccess(true);
   };
 
+  // 模擬即時海象
   useEffect(() => {
     const timer = setInterval(() => {
       setManaStatus(prev => ({
         wave: (parseFloat(prev.wave) + (Math.random() * 0.2 - 0.1)).toFixed(1),
         wind: (parseFloat(prev.wind) + (Math.random() * 0.6 - 0.3)).toFixed(1)
       }));
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timer);
   }, []);
 
-  // --- 子組件 ---
+  // --- 各區塊組件 ---
   const GuildHall = () => (
     <div className="flex flex-col items-center space-y-8 animate-in fade-in duration-700">
       <div className={`relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-amber-700 flex items-center justify-center bg-stone-800 ${neonBlueShadow}`}>
@@ -126,32 +151,32 @@ const App = () => {
       </div>
       <div className="text-center space-y-2 font-sans text-amber-50">
         <h2 className="text-4xl md:text-5xl font-black text-amber-500 uppercase tracking-widest italic">外木山｜異世界公會</h2>
-        <p className="text-stone-400 font-mono text-[10px] uppercase tracking-[0.4em]">Digital Frontier System v4.0.1 ✨</p>
+        <p className="text-stone-400 font-mono text-[10px] uppercase tracking-[0.4em]">Digital Frontier System v4.1.0 ✨</p>
       </div>
 
       {!isRegistered ? (
         <ParchmentCard className="w-full max-w-sm">
           <div className="space-y-4 font-sans text-stone-900">
-            <label className="block font-black text-xs uppercase italic underline underline-offset-4 tracking-widest">【入界儀式】冒險者登記</label>
+            <label className="block font-black text-xs uppercase italic underline underline-offset-4">【入界儀式】冒險者登記</label>
             <input type="text" placeholder="輸入真名..." value={playerName} onChange={(e) => setPlayerName(e.target.value)} className="w-full p-4 bg-white/50 border-2 border-stone-800 font-bold focus:outline-none" />
-            <button onClick={() => playerName && setIsRegistered(true)} className="w-full py-4 bg-stone-800 text-white font-black hover:bg-stone-700 transition-colors flex items-center justify-center gap-2">啟動傳送序列 <ChevronRight size={18} /></button>
+            <button onClick={() => playerName && setIsRegistered(true)} className="w-full py-4 bg-stone-800 text-white font-black hover:bg-stone-700 transition-colors flex items-center justify-center gap-2 shadow-lg">啟動傳送序列 <ChevronRight size={18} /></button>
           </div>
         </ParchmentCard>
       ) : (
         <div className="flex flex-col items-center gap-6 w-full max-w-lg font-sans text-amber-50">
-          <div className="px-6 py-2 bg-amber-900/30 border border-amber-600 rounded-full text-amber-400 font-bold flex items-center gap-2"><User size={16} /> 開拓者：{playerName}</div>
+          <div className="px-6 py-2 bg-amber-900/30 border border-amber-600 rounded-full text-amber-400 font-bold flex items-center gap-2"><User size={16} /> 已識別開拓者：{playerName}</div>
           <div className="w-full bg-stone-800/80 border-2 border-[#0074D9]/40 p-6 rounded relative overflow-hidden group">
              <div className="relative z-10 space-y-4 text-center">
                 <div className="flex justify-between items-center border-b border-[#0074D9]/20 pb-2">
                    <h4 className="text-[10px] font-black text-[#0074D9] uppercase tracking-widest font-mono italic">✨ Daily Revelation</h4>
-                   <button onClick={getDailyRevelation} disabled={aiLoading} className="text-[#0074D9] text-[10px] font-black hover:underline flex items-center gap-1">
+                   <button onClick={getDailyRevelation} disabled={aiLoading} className="text-[#0074D9] text-[10px] font-black hover:underline disabled:opacity-50 flex items-center gap-1 transition-all">
                      {aiLoading ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />} 請求
                    </button>
                 </div>
-                {revelation && <p className="text-sm text-amber-100 italic bg-black/30 p-4 rounded border border-white/10 animate-in slide-in-from-top-2">「{revelation}」</p>}
+                {revelation && <p className="text-sm text-amber-100 italic bg-black/30 p-4 rounded border border-white/10 animate-in slide-in-from-top-2 leading-relaxed font-medium">「{revelation}」</p>}
              </div>
           </div>
-          <button onClick={() => setActiveTab('quests')} className="px-12 py-4 bg-amber-600 hover:bg-amber-500 text-white font-black rounded shadow-[0_4px_0_0_rgba(120,53,15,1)] w-full">檢閱委託公告</button>
+          <button onClick={() => setActiveTab('quests')} className="px-12 py-4 bg-amber-600 hover:bg-amber-500 text-white font-black rounded shadow-[0_4px_0_0_rgba(120,53,15,1)] w-full tracking-[0.2em]">接取公會委託</button>
         </div>
       )}
     </div>
@@ -160,10 +185,7 @@ const App = () => {
   const QuestBoard = () => (
     <div className="w-full max-w-5xl mx-auto space-y-8 animate-in slide-in-from-bottom-10 pb-12 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-center md:items-end border-b-2 border-amber-900/30 pb-6 gap-6">
-        <div>
-          <h3 className="text-2xl font-black text-amber-500 uppercase italic">Mission Board</h3>
-          <p className="text-xs text-stone-500 font-mono mt-1 uppercase tracking-widest text-amber-50/60">Active Commissions: {QUEST_DATA.length}</p>
-        </div>
+        <div><h3 className="text-2xl font-black text-amber-500 uppercase italic">Mission Board</h3><p className="text-xs text-stone-500 font-mono mt-1 uppercase tracking-widest text-amber-50/60">Active Commissions: {QUEST_DATA.length}</p></div>
         <div className="flex gap-4 bg-stone-800/80 backdrop-blur-md p-4 border-2 border-[#0074D9]/40 rounded shadow-[0_0_20px_rgba(0,116,217,0.2)]">
             <div className="flex items-center gap-3 border-r border-stone-700 pr-6">
               <Waves size={24} className="text-[#0074D9] animate-bounce" />
@@ -176,23 +198,21 @@ const App = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-stone-900">
         {QUEST_DATA.map((q) => (
-          <ParchmentCard key={q.id} className="flex flex-col min-h-[400px] transition-transform hover:-translate-y-1">
+          <ParchmentCard key={q.id} className="flex flex-col min-h-[380px] transition-transform hover:-translate-y-1">
             <div className={`absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center font-black border-2 shadow-md z-10 ${q.rank === 'S' ? 'bg-amber-500 text-stone-900 border-stone-900' : 'bg-stone-900 text-amber-500 border-amber-700'}`}>{q.rank}</div>
             <p className="text-[10px] font-mono text-stone-500 font-bold uppercase tracking-widest italic">{q.id} // {q.type}</p>
             <h4 className="text-xl font-black text-stone-900 mt-1 h-14 overflow-hidden leading-tight">{q.title}</h4>
-            <div className="space-y-2 mb-6 text-stone-800">
-              <div className="flex items-center gap-2 text-sm font-bold"><Clock size={16} className="text-amber-800" /> {q.time}</div>
-              <div className="flex items-start gap-2 text-xs font-medium h-8"><MapPin size={16} className="text-amber-800 shrink-0" /> {q.location}</div>
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2 text-sm text-stone-800 font-bold italic font-sans"><Clock size={16} className="text-amber-800" /> {q.time}</div>
+              <div className="flex items-start gap-2 text-xs text-stone-700 font-medium h-8 font-sans"><MapPin size={16} className="text-amber-800 shrink-0" /> {q.location}</div>
             </div>
             <div className="mt-auto mb-6 bg-stone-900/10 rounded-lg p-4 border border-stone-800/20 relative">
-               <span className="text-[9px] font-black text-amber-900 flex items-center gap-1 uppercase tracking-widest font-mono opacity-50 italic">AI Analysis</span>
-               <div className="text-[10px] italic mt-2 min-h-[50px] leading-relaxed">
-                  {questStrategies[q.id] === 'loading' ? "靈脈分析中..." : questStrategies[q.id] || <button onClick={() => getQuestStrategy(q)} className="text-[#0074D9] underline">[ 啟動戰術建議 ]</button>}
-               </div>
+               <span className="text-[9px] font-black text-amber-900 flex items-center gap-1 uppercase tracking-widest font-mono opacity-50"><Sparkles size={10} /> AI Tactical Analysis</span>
+               <div className="text-[10px] italic mt-2 min-h-[50px] leading-relaxed text-stone-800">{questStrategies[q.id] === 'loading' ? "分析儀式啟動中..." : questStrategies[q.id] || <button onClick={() => getQuestStrategy(q)} className="text-[#0074D9] underline font-bold">[ 啟動靈脈分析 ]</button>}</div>
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-stone-400/50">
-               <span className="text-amber-900 font-black text-base">報酬: {q.reward}</span>
-               <button onClick={() => handleQuestAccept(q)} className="px-6 py-2 bg-stone-900 text-white text-xs font-black hover:bg-stone-800 uppercase tracking-widest flex items-center gap-2">接取此委託 <ChevronRight size={14}/></button>
+               <span className="text-amber-900 font-black text-base font-sans tracking-tighter">REWARD: {q.reward}</span>
+               <button onClick={() => handleQuestAccept(q)} className="px-6 py-2 bg-stone-900 text-white text-xs font-black hover:bg-stone-800 uppercase tracking-widest shadow-sm font-sans transition-all active:scale-95">接取任務</button>
             </div>
           </ParchmentCard>
         ))}
@@ -202,42 +222,63 @@ const App = () => {
 
   const RegistrationView = () => {
     if (isSuccess) return (
-      <div className="w-full max-w-xl mx-auto py-20 text-center animate-in zoom-in-95 font-sans">
-         <div className="inline-flex p-6 bg-green-900/20 rounded-full border-2 border-green-500 mb-8 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
-            <Check size={80} className="text-green-500 animate-bounce" />
-         </div>
-         <h3 className="text-4xl font-black text-amber-500 italic mb-4">委託合約已上傳！</h3>
-         <p className="text-amber-50/80 leading-relaxed mb-10">「恭喜，開拓者。合約已進入靈脈，請靜待位面訊息指令。」</p>
-         <button onClick={() => { setIsSuccess(false); setActiveTab('quests'); }} className="px-10 py-4 bg-stone-800 text-white font-black rounded hover:bg-stone-700">返回任務公告</button>
+      <div className="w-full max-w-xl mx-auto py-20 text-center animate-in zoom-in-95 font-sans text-amber-50">
+         <div className="inline-flex p-6 bg-green-900/20 rounded-full border-2 border-green-500 mb-8 shadow-[0_0_30px_rgba(34,197,94,0.3)]"><Check size={80} className="text-green-500 animate-bounce" /></div>
+         <h3 className="text-4xl font-black text-amber-500 italic mb-4">委託合約已傳送！</h3>
+         <p className="text-amber-50/80 leading-relaxed mb-10">「恭喜，開拓者。你的合約已成功注入靈脈。<br/>請靜待公會幹事的位面通訊指令。」</p>
+         <button onClick={() => { setIsSuccess(false); setActiveTab('quests'); }} className="px-10 py-4 bg-stone-800 text-white font-black rounded border-b-4 border-black hover:bg-stone-700">返回任務公告</button>
       </div>
     );
 
     return (
       <div className="w-full max-w-3xl mx-auto space-y-10 animate-in slide-in-from-right-10 pb-20 font-sans">
-        <div className="flex items-center gap-4">
-           <button onClick={() => setActiveTab('quests')} className="p-2 bg-stone-800 text-amber-500 rounded-full hover:bg-stone-700"><ChevronLeft/></button>
+        <div className="flex items-center gap-4 text-amber-50">
+           <button onClick={() => setActiveTab('quests')} className="p-2 bg-stone-800 text-amber-500 rounded-full border border-amber-900/30 hover:bg-stone-700"><ChevronLeft/></button>
            <h3 className="text-2xl font-black text-amber-500 italic uppercase">數位開拓契約 / Registration</h3>
         </div>
 
         <section className="bg-stone-800/80 border-2 border-amber-900/40 p-6 rounded-sm shadow-xl">
            <div className="flex items-center gap-4 border-b border-amber-900/30 pb-4 mb-6 text-amber-50">
-              <div className="p-3 rounded bg-amber-500 text-stone-900 font-black">{selectedQuest?.rank}</div>
-              <div><h4 className="text-xl font-black">{selectedQuest?.title}</h4><p className="text-xs text-amber-500 flex items-center gap-1 mt-1"><Clock size={12}/> {selectedQuest?.time}</p></div>
+              <div className="p-3 rounded bg-amber-500 text-stone-900 font-black shadow-[0_0_15px_rgba(245,158,11,0.5)]">{selectedQuest?.rank}</div>
+              <div><h4 className="text-xl font-black">{selectedQuest?.title}</h4><p className="text-xs text-amber-500 flex items-center gap-1 mt-1 font-bold italic"><Clock size={12}/> {selectedQuest?.time}</p></div>
            </div>
 
            <form onSubmit={handleFormSubmit} className="space-y-8 text-amber-50">
               <div className="space-y-6">
-                 <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-2"><User size={12}/> 個人位面數據</p>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-stone-900">
-                    {['姓名', '身分證字號', '聯絡電話', 'Email'].map(field => (
-                      <div key={field} className="space-y-1">
-                        <label className="text-[10px] font-bold text-amber-50/50 uppercase">{field} *</label>
-                        <input required type="text" className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none" />
-                      </div>
+                 <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] flex items-center gap-2"><User size={12}/> 個人位面數據 (Registration Data)</p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {REQUIRED_FIELDS.map(field => (
+                        <div key={field.key} className="space-y-1">
+                          <label className="text-[10px] font-bold text-amber-50/50 uppercase">{field.label} *</label>
+                          <input required type={field.type} value={(formData as any)[field.key]} onChange={e => setFormData({...formData, [field.key]: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none font-bold" />
+                        </div>
                     ))}
                  </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-1"><label className="text-[10px] font-bold text-amber-50/50 uppercase">性別</label><select value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none appearance-none"><option value="">請選擇...</option><option value="男">男</option><option value="女">女</option><option value="其他">其他</option></select></div>
+                    <div className="space-y-1"><label className="text-[10px] font-bold text-amber-50/50 uppercase">出生年月日</label><input type="date" value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none" /></div>
+                    <div className="space-y-1"><label className="text-[10px] font-bold text-amber-50/50 uppercase">飲食需求</label><select value={formData.diet} onChange={e => setFormData({...formData, diet: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none appearance-none"><option value="葷食">葷食</option><option value="素食">素食</option><option value="蛋奶素">蛋奶素</option></select></div>
+                 </div>
               </div>
-              <button type="submit" disabled={isSubmitting} className="w-full py-5 bg-amber-600 hover:bg-amber-500 text-stone-900 font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all disabled:opacity-50">
+
+              <div className="space-y-6">
+                 <p className="text-[10px] font-black text-amber-500 uppercase tracking-[0.3em] flex items-center gap-2"><Shield size={12}/> 生存輔助與緊急聯絡</p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {OPTIONAL_FIELDS.map(field => (
+                        <div key={field.key} className="space-y-1">
+                          <label className="text-[10px] font-bold text-amber-50/50 uppercase">{field.label}</label>
+                          <input type={field.type} value={(formData as any)[field.key]} onChange={e => setFormData({...formData, [field.key]: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none" />
+                        </div>
+                    ))}
+                 </div>
+                 <div className="space-y-1"><label className="text-[10px] font-bold text-amber-50/50 uppercase">特殊醫療狀況說明</label><textarea rows={3} value={formData.medicalInfo} onChange={e => setFormData({...formData, medicalInfo: e.target.value})} className="w-full bg-stone-900 border border-amber-900/30 p-3 text-amber-50 focus:border-amber-500 focus:outline-none resize-none text-xs" placeholder="藥物過敏、特殊病史或行動需求。"></textarea></div>
+              </div>
+
+              <div className="bg-amber-900/10 p-4 border border-amber-900/30 rounded italic opacity-80">
+                 <label className="flex items-start gap-3 cursor-pointer"><input required type="checkbox" checked={formData.agreed} onChange={e => setFormData({...formData, agreed: e.target.checked})} className="mt-1 accent-amber-500" /><span className="text-[10px] text-amber-100/70">本人確認填寫資訊無誤，並承諾於開拓期間遵守《生存手冊》之安全協議。</span></label>
+              </div>
+
+              <button type="submit" disabled={isSubmitting} className="w-full py-5 bg-amber-600 hover:bg-amber-500 text-stone-900 font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 shadow-2xl">
                 {isSubmitting ? <Loader2 className="animate-spin" /> : <Send size={20} />} {isSubmitting ? "上傳中..." : "授權並提交契約"}
               </button>
            </form>
@@ -250,27 +291,31 @@ const App = () => {
     <div className="w-full max-w-4xl mx-auto space-y-16 animate-in fade-in duration-700 pb-24 font-serif">
       <div className="text-center relative">
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-10 pointer-events-none text-amber-500"><History size={120} /></div>
-        <h3 className="text-4xl md:text-5xl font-black text-amber-500 italic uppercase tracking-tighter">開拓者生存手冊</h3>
+        <h3 className="text-4xl md:text-5xl font-black text-amber-500 italic uppercase tracking-tighter drop-shadow-lg">開拓者生存手冊</h3>
         <p className="text-xs font-mono text-stone-500 mt-2 uppercase italic font-sans">[ 遺產編號：WM-ARCH-1.3.0 ]</p>
-        <div className="w-24 h-1 bg-amber-900/30 mx-auto mt-6"></div>
+        <div className="w-24 h-1 bg-amber-900/30 mx-auto mt-6" />
       </div>
 
-      <div className="space-y-12">
-        {/* NOTE 1 & 2 視覺區塊 */}
-        {[ { id: 'note1', title: '第一卷：地跡文獻', url: ASSETS.NOTE1_URL }, { id: 'note2', title: '第二卷：禁忌法典', url: ASSETS.NOTE2_URL } ].map(note => (
+      <div className="space-y-16">
+        {[ 
+          { id: 'note1', title: '第一卷：地跡文獻', url: ASSETS.NOTE1_URL, desc: '「載錄外木山位面座標。藍色為穩定基地；紅色區域極度危險，嚴禁越界。」' }, 
+          { id: 'note2', title: '第二卷：禁忌法典', url: ASSETS.NOTE2_URL, desc: '「守護者核心法典：包含開拓者行為準則、海域禁忌與 SOS 緊急程序。」' } 
+        ].map(note => (
           <div key={note.id} className="space-y-6">
             <div className="flex items-center gap-4 px-4 font-sans text-amber-50"><div className="h-px flex-1 bg-stone-800"></div><h4 className="text-xs font-black text-amber-700 flex items-center gap-2 italic uppercase tracking-widest">{note.title}</h4><div className="h-px flex-1 bg-stone-800"></div></div>
             <section className="bg-[#e8dfc9] p-2 md:p-6 rounded-sm shadow-inner border-[12px] border-[#d4c5a3] relative overflow-hidden group">
+               <div className="absolute top-2 left-2 px-2 py-1 bg-amber-900/10 border border-amber-900/20 text-[8px] text-amber-900 font-mono font-bold rotate-[-2deg] z-20 font-sans uppercase">PROPERTY OF GUILD</div>
                <div className="p-1 bg-white/40 shadow-2xl border border-stone-400 relative">
-                 <img src={note.url} alt={note.id} className="relative z-10 max-w-full h-auto opacity-95 grayscale-[0.2] sepia-[0.3] brightness-95 contrast-110 hover:grayscale-0 transition-all duration-1000" />
+                 <img src={note.url} alt={note.id} className="relative z-10 max-w-full h-auto opacity-95 grayscale-[0.2] sepia-[0.3] brightness-95 contrast-110 hover:grayscale-0 transition-all duration-1000 shadow-xl" />
                  {note.id === 'note2' && <div className="absolute top-1/2 left-10 opacity-30 pointer-events-none text-red-900"><Stamp size={80} /></div>}
                </div>
+               <div className="mt-6 px-4 py-4 bg-amber-900/5 border-l-4 border-amber-800 text-[11px] leading-relaxed text-stone-700 italic">{note.desc}</div>
             </section>
           </div>
         ))}
 
-        <section className="space-y-6 pt-10">
-           <h4 className="text-xs font-black text-amber-500 uppercase tracking-widest font-sans flex items-center gap-2 px-2"><Navigation size={16} /> Live Grid Synchronizer</h4>
+        <section className="space-y-6 pt-10 px-2 font-sans">
+           <h4 className="text-xs font-black text-amber-500 uppercase tracking-widest flex items-center gap-2 text-amber-50"><Navigation size={16} /> Live Grid Synchronizer</h4>
            <div className="bg-stone-950 p-1 border-2 border-stone-800 shadow-[0_0_40px_rgba(0,116,217,0.15)] relative overflow-hidden">
               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.8841!2d121.7107!3d25.1685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4e6884d4e681%3A0x6884d4e6816884d4!2z5aSW5pyo5bGx5rKZ54G_!5e0!3m2!1szh-TW!2stw" className="w-full h-[450px] border-none opacity-85 grayscale-[0.2] brightness-90 contrast-110 hover:filter-none transition-all duration-700" allowFullScreen="" loading="lazy"></iframe>
            </div>
@@ -282,17 +327,28 @@ const App = () => {
   return (
     <div className="min-h-screen bg-stone-900 text-stone-100 font-sans selection:bg-amber-600 pb-20">
       <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden opacity-10">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(0,116,217,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(0,116,217,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]" />
       </div>
       <nav className="fixed top-0 z-40 w-full px-6 py-4 bg-stone-900/80 backdrop-blur-md border-b-2 border-amber-900/30 flex justify-between items-center shadow-2xl">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('hall')}><div className="w-8 h-8 bg-amber-600 rounded flex items-center justify-center shadow-lg"><Scroll size={18} className="text-stone-900" /></div><span className="font-black text-amber-500 uppercase tracking-tighter italic">Guild_Terminal_v4.0.1</span></div>
+        <button type="button" className="flex items-center gap-2 cursor-pointer font-sans" onClick={() => setActiveTab('hall')}><div className="w-8 h-8 bg-amber-600 rounded flex items-center justify-center shadow-lg"><Scroll size={18} className="text-stone-900" /></div><span className="font-black text-amber-500 uppercase tracking-tighter italic">Guild_Terminal_v4.1.0</span></button>
         <div className="hidden md:flex gap-10">
           {['hall', 'quests', 'handbook'].map(id => (
-            <button key={id} onClick={() => setActiveTab(id)} className={`text-[11px] font-black uppercase tracking-widest transition-all hover:scale-110 ${activeTab === id ? 'text-amber-400 border-b-2 border-amber-400 pb-1' : 'text-stone-500 hover:text-white'}`}>{id === 'hall' ? '公會大廳' : id === 'quests' ? '任務公告' : '冒險手冊'}</button>
+            <button key={id} onClick={() => setActiveTab(id as any)} className={`text-[11px] font-black uppercase tracking-widest transition-all hover:scale-110 ${activeTab === id ? 'text-amber-400 border-b-2 border-amber-400 pb-1' : 'text-stone-500 hover:text-white'}`}>{id === 'hall' ? '公會大廳' : id === 'quests' ? '任務公告' : '冒險手冊'}</button>
           ))}
         </div>
-        <button className="md:hidden text-amber-500" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <X size={24} /> : <ScanLine size={24} />}</button>
+        <button type="button" className="md:hidden text-amber-500" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="切換選單">{isMenuOpen ? <X size={24} /> : <ScanLine size={24} />}</button>
       </nav>
+
+      {isMenuOpen && (
+        <div className="fixed top-16 left-0 right-0 z-30 bg-stone-950/95 border-b border-amber-900/40 md:hidden animate-in slide-in-from-top">
+          <div className="flex flex-col divide-y divide-stone-800">
+            {[{ id: 'hall', label: '公會大廳' }, { id: 'quests', label: '任務公告' }, { id: 'handbook', label: '冒險手冊' }].map(item => (
+              <button key={item.id} type="button" onClick={() => { setActiveTab(item.id as any); setIsMenuOpen(false); }} className={`px-6 py-4 text-left text-xs font-black uppercase tracking-widest ${activeTab === item.id ? 'text-amber-400' : 'text-stone-300'}`}>{item.label}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <main className="container mx-auto pt-32 px-6 min-h-[calc(100vh-100px)]">
         {activeTab === 'hall' && <GuildHall />}
         {activeTab === 'quests' && <QuestBoard />}
@@ -300,7 +356,7 @@ const App = () => {
         {activeTab === 'registration' && <RegistrationView />}
       </main>
       <footer className="w-full py-10 bg-stone-950 text-center border-t border-stone-800 text-[10px] font-mono text-stone-600 uppercase tracking-widest font-sans">
-        Island Dwellers Studio // Coastline Education // Keelung
+        Island Dwellers Studio // Coastline Education // Smart Governance // Keelung
       </footer>
     </div>
   );
