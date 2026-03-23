@@ -1,1 +1,563 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { 
+  Shield, 
+  Scroll, 
+  BookOpen, 
+  Sword, 
+  User, 
+  ChevronRight, 
+  Waves, 
+  Wind, 
+  MapPin, 
+  CheckCircle2,
+  Lock,
+  AlertCircle,
+  Menu,
+  X,
+  Zap,
+  Compass,
+  Clock,
+  Navigation,
+  Anchor,
+  AlertTriangle,
+  Sparkles,
+  Loader2
+} from 'lucide-react';
 
+const apiKey = ""; // Gemini API Key 環境會自動注入
+const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'waimushan-quest-v2';
+
+// 任務數據
+const QUEST_DATA = [
+  { id: 'Q1', title: '海岸公民練習曲：沙灘觀察與環境行動', time: '5/2 (六) 09:00-16:30', location: '外木山沙灘 / 德育校區', rank: 'D', reward: '50 G', type: '公民行動', context: '進行淨灘與海洋廢棄物觀察紀錄，分析沙灘環境問題。' },
+  { id: 'Q2', title: '海岸變奏曲：氣候變遷與海岸線的故事', time: '5/9 (六) 09:00-12:00', location: '室內教室', rank: 'C', reward: '100 G', type: '環境觀察', context: '說明氣候變遷對海岸線的影響，包括海平面上升與海岸侵蝕。' },
+  { id: 'Q3', title: '海岸安全課：仰漂自救與求救訊號', time: '5/9 (六) 13:30-16:30', location: '外木山沙灘', rank: 'B', reward: '150 G', type: '安全訓練', context: '學習抽筋處置、仰漂自救觀念與求救手勢。' },
+  { id: 'Q4', title: '海岸判讀課：離岸流與海域風險辨識', time: '5/16 (六) 09:00-12:00', location: '室內教室', rank: 'B', reward: '150 G', type: '風險辨識', context: '說明離岸流形成原理與海域風險辨識方法。' },
+  { id: 'Q5', title: '海岸守護課：拋繩袋與海域救援技能', time: '5/16 (六) 13:30-16:30', location: '外木山沙灘', rank: 'A', reward: '200 G', type: '救援實務', context: '拋繩袋與浮具操作演練，PFD救生衣穿戴檢核。' },
+  { id: 'Q6', title: '海味體驗課：食魚教育與海岸走讀（一）', time: '6/6 (六) 09:00-16:30', location: '廚房教室 / 外木山海岸', rank: 'D', reward: '80 G', type: '文化體驗', context: '食魚教育與海洋食材認識，海岸走讀認識海洋文化。' },
+  { id: 'Q7', title: '海味探索課：食魚教育與海岸走讀（二）', time: '6/13 (六) 09:00-16:30', location: '廚房教室 / 外木山海岸', rank: 'D', reward: '80 G', type: '文化體驗', context: '探索海洋食材來源與漁業文化。' },
+  { id: 'Q8', title: '海味探索課：食魚教育與海岸走讀（三）', time: '7/4 (六) 09:00-16:30', location: '廚房教室 / 外木山海岸', rank: 'D', reward: '80 G', type: '文化體驗', context: '認識海洋飲食文化與海岸導覽。' },
+  { id: 'Q9', title: '海岸治理工作坊：低衝擊遊憩與LNT原則', time: '7/11 (六) 09:00-12:00', location: '室內教室', rank: 'S', reward: '250 G', type: '政策工作坊', context: '介紹 LNT 低衝擊遊憩原則，探討遊憩與環境保護平衡。' },
+  { id: 'Q10', title: '海岸治理工作坊：共管機制與協作模擬', time: '7/11 (六) 13:30-16:30', location: '室內教室', rank: 'S', reward: '250 G', type: '政策工作坊', context: '透過角色扮演模擬海岸治理協作模式。' }
+];
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('hall');
+  const [playerName, setPlayerName] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [manaStatus, setManaStatus] = useState({ wave: 1.7, wind: 11.9 });
+  
+  // AI 相關狀態
+  const [aiLoading, setAiLoading] = useState(false);
+  const [revelation, setRevelation] = useState(null);
+  const [questStrategies, setQuestStrategies] = useState({});
+
+  // Gemini API 呼叫函數（含指數退避）
+  const callGemini = async (prompt, systemPrompt) => {
+    let retries = 0;
+    const maxRetries = 5;
+    
+    while (retries <= maxRetries) {
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] }
+          })
+        });
+
+        if (!response.ok) throw new Error('API Request Failed');
+        
+        const result = await response.json();
+        return result.candidates?.[0]?.content?.parts?.[0]?.text;
+      } catch (error) {
+        if (retries === maxRetries) throw error;
+        const delay = Math.pow(2, retries) * 1000;
+        await new Promise(res => setTimeout(res, delay));
+        retries++;
+      }
+    }
+  };
+
+  // ✨ 獲取每日啟示
+  const getDailyRevelation = async () => {
+    setAiLoading(true);
+    try {
+      const systemPrompt = "你是一位異世界公會的導師。請根據冒險者的名字，給予一個簡短的 RPG 稱號與一句帶有海洋智慧的鼓勵。格式請簡短，使用繁體中文，帶有神祕感。不要輸出 Markdown 標籤。";
+      const prompt = `冒險者名稱：${playerName}。請給予今日的啟示。`;
+      const text = await callGemini(prompt, systemPrompt);
+      setRevelation(text);
+    } catch (err) {
+      setRevelation("魔力連結不穩定，位面啟示暫時受阻。");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // ✨ 獲取任務開拓策略
+  const getQuestStrategy = async (quest) => {
+    if (questStrategies[quest.id]) return; // 已生成則跳過
+    
+    setQuestStrategies(prev => ({ ...prev, [quest.id]: "loading" }));
+    try {
+      const systemPrompt = "你是一位異世界公會的戰術分析官。請針對給定的『海岸環境教育任務』，撰寫一段異世界風格的『開拓策略』。策略內容應結合現實的環保/安全知識，但語氣要像在指導冒險者攻略地下城或守護領地。繁體中文，100字以內。";
+      const prompt = `任務標題：${quest.title}。內容描述：${quest.context}。地點：${quest.location}。請生成戰術建議。`;
+      const text = await callGemini(prompt, systemPrompt);
+      setQuestStrategies(prev => ({ ...prev, [quest.id]: text }));
+    } catch (err) {
+      setQuestStrategies(prev => ({ ...prev, [quest.id]: "位面通訊中斷，無法讀取策略。" }));
+    }
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setManaStatus(prev => ({
+        wave: (parseFloat(prev.wave) + (Math.random() * 0.2 - 0.1)).toFixed(1),
+        wind: (parseFloat(prev.wind) + (Math.random() * 0.6 - 0.3)).toFixed(1)
+      }));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const parchmentBg = "bg-[#f4ead5] bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]";
+  const neubrutalismShadow = "shadow-[6px_6px_0px_0px_rgba(120,53,15,1)]";
+  const neonBlueShadow = "shadow-[0_0_15px_rgba(0,116,217,0.4)]";
+
+  // --- 區塊一：公會大廳 ---
+  const GuildHall = () => (
+    <div className="flex flex-col items-center space-y-8 animate-in fade-in duration-700">
+      <div className="relative group">
+        <div className="absolute -inset-1 bg-[#0074D9] rounded-full blur opacity-20 group-hover:opacity-40 transition"></div>
+        <div className={`relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-amber-700 flex items-center justify-center bg-stone-800 ${neonBlueShadow}`}>
+          <Waves className="text-[#0074D9] w-16 h-16 md:w-24 md:h-24 animate-pulse" />
+        </div>
+      </div>
+
+      <div className="text-center space-y-4">
+        <h2 className="text-4xl md:text-5xl font-black text-amber-500 tracking-tighter">
+          外木山｜<span className="text-white">異世界公會</span>
+        </h2>
+        <p className="text-stone-400 font-mono text-sm tracking-widest uppercase">Intelligent Frontier System v3.0 ✨</p>
+      </div>
+
+      {!isRegistered ? (
+        <div className={`w-full max-sm p-8 ${parchmentBg} ${neubrutalismShadow} border-2 border-stone-800 rounded-sm`}>
+          <div className="space-y-4">
+            <label className="block text-stone-900 font-black text-xs uppercase tracking-widest italic underline underline-offset-4">【入界儀式】冒險者註冊</label>
+            <input 
+              type="text" 
+              placeholder="輸入你的冒險真名..." 
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="w-full p-4 bg-white/50 border-2 border-stone-800 focus:outline-none focus:bg-white text-stone-900 font-bold placeholder:text-stone-400"
+            />
+            <button 
+              onClick={() => playerName && setIsRegistered(true)}
+              className="w-full py-4 bg-stone-800 text-white font-black hover:bg-stone-700 transition-colors flex items-center justify-center gap-2"
+            >
+              啟動傳送序列 <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-6 w-full max-w-lg">
+          <div className="px-6 py-2 bg-amber-900/30 border border-amber-600 rounded-full text-amber-400 font-bold flex items-center gap-2">
+            <User size={16} /> 跨時空開拓者：{playerName}
+          </div>
+
+          {/* AI 每日啟示按鈕 */}
+          <div className="w-full bg-stone-800/80 border-2 border-[#0074D9]/40 p-6 rounded relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-2 opacity-10">
+                <Sparkles size={48} className="text-[#0074D9]" />
+             </div>
+             <div className="relative z-10 space-y-4">
+                <div className="flex justify-between items-center">
+                   <h4 className="text-xs font-black text-[#0074D9] uppercase tracking-widest">✨ 位面啟示中心</h4>
+                   <button 
+                     onClick={getDailyRevelation}
+                     disabled={aiLoading}
+                     className="px-3 py-1 bg-[#0074D9] text-white text-[10px] font-black hover:bg-blue-600 disabled:opacity-50 flex items-center gap-1"
+                   >
+                     {aiLoading ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                     請求今日啟示
+                   </button>
+                </div>
+                {revelation ? (
+                  <p className="text-sm text-amber-100 italic font-medium leading-relaxed bg-black/30 p-3 rounded border border-white/10 animate-in slide-in-from-top-2">
+                    「{revelation}」
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-stone-500 italic">點擊按鈕，由靈脈 AI 讀取你的星圖座標與位面命運...</p>
+                )}
+             </div>
+          </div>
+
+          <button 
+            onClick={() => setActiveTab('quests')}
+            className="px-12 py-4 bg-amber-600 hover:bg-amber-500 text-white font-black rounded shadow-[0_4px_0_0_rgba(120,53,15,1)] active:translate-y-1 transition-all"
+          >
+            檢閱公會委託
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  // --- 區塊二：任務公告板 ---
+  const QuestBoard = () => (
+    <div className="w-full max-w-5xl mx-auto space-y-8 animate-in slide-in-from-bottom-10 duration-500 pb-12">
+      <div className="flex flex-col md:flex-row justify-between items-center md:items-end border-b-2 border-amber-900/30 pb-6 gap-6">
+        <div>
+          <h3 className="text-2xl font-black text-amber-500 flex items-center gap-2">
+            <Sword /> 任務公告板
+          </h3>
+          <p className="text-xs text-stone-500 font-mono mt-1 uppercase tracking-widest italic">Active Commissions: {QUEST_DATA.length}</p>
+        </div>
+
+        {/* 封印代碼同步 HUD */}
+        <div className="flex flex-col gap-1 items-end">
+          <div className="text-[10px] text-[#0074D9] font-mono uppercase tracking-widest flex items-center gap-1 mb-1">
+             <Zap size={12} className="animate-pulse" /> 封印代碼即時同步中
+          </div>
+          <div className="flex gap-4 bg-stone-800/80 backdrop-blur-md p-3 md:p-4 border-2 border-[#0074D9]/40 rounded shadow-[0_0_20px_rgba(0,116,217,0.2)]">
+            <div className="flex items-center gap-3 border-r border-stone-700 pr-4">
+              <div className="p-2 bg-[#0074D9]/20 rounded-full">
+                <Waves size={20} className="text-[#0074D9] animate-bounce" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-stone-400 uppercase font-bold tracking-tighter">浪高 Wave</span>
+                <span className="text-xl md:text-2xl font-mono font-black text-[#FFD700] leading-none">{manaStatus.wave}<span className="text-xs ml-0.5">m</span></span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-[#0074D9]/20 rounded-full">
+                <Wind size={20} className="text-[#0074D9]" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] text-stone-400 uppercase font-bold tracking-tighter">風速 Wind</span>
+                <span className="text-xl md:text-2xl font-mono font-black text-[#0074D9] leading-none">{manaStatus.wind}<span className="text-xs ml-0.5">kts</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {QUEST_DATA.map((q) => (
+          <div 
+            key={q.id} 
+            className={`group relative ${parchmentBg} ${neubrutalismShadow} border-2 border-stone-800 p-6 flex flex-col min-h-[320px] hover:-translate-y-1 transition-transform`}
+          >
+            <div className={`absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center font-black border-2 shadow-md z-10 
+              ${q.rank === 'S' ? 'bg-amber-500 text-stone-900 border-stone-900' : 'bg-stone-900 text-amber-500 border-amber-700'}`}>
+              {q.rank}
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-[10px] font-mono text-stone-500 font-bold uppercase tracking-widest">{q.id} // {q.type}</p>
+              <h4 className="text-xl font-black text-stone-900 mt-1 leading-tight h-14 overflow-hidden">{q.title}</h4>
+            </div>
+            
+            <div className="space-y-3 mb-4">
+              <div className="flex items-center gap-2 text-sm text-stone-800 font-bold">
+                <Clock size={16} className="text-amber-800" /> 
+                <span className="bg-stone-800/10 px-1 italic">{q.time}</span>
+              </div>
+              <div className="flex items-start gap-2 text-xs text-stone-700 font-medium h-8">
+                <MapPin size={16} className="text-amber-700 shrink-0" /> {q.location}
+              </div>
+            </div>
+
+            {/* AI 開拓策略區 */}
+            <div className="mt-auto mb-4 bg-stone-900/10 rounded-lg p-4 border border-stone-800/20 relative">
+               <div className="flex items-center justify-between mb-2">
+                  <span className="text-[9px] font-black text-amber-900 uppercase tracking-widest flex items-center gap-1">
+                    <Sparkles size={10} /> ✨ 智慧開拓策略 (AI Strategy)
+                  </span>
+                  {!questStrategies[q.id] && (
+                    <button 
+                      onClick={() => getQuestStrategy(q)}
+                      className="text-[9px] font-bold text-[#0074D9] underline hover:text-blue-700"
+                    >
+                      [ 啟動分析 ]
+                    </button>
+                  )}
+               </div>
+               <div className="text-[10px] leading-relaxed text-stone-700 italic min-h-[40px]">
+                  {questStrategies[q.id] === 'loading' ? (
+                    <div className="flex items-center gap-2 animate-pulse">
+                       <Loader2 size={10} className="animate-spin" /> 正在讀取位面資料庫...
+                    </div>
+                  ) : questStrategies[q.id] ? (
+                    questStrategies[q.id]
+                  ) : (
+                    "尚未載入戰術分析，點擊按鈕獲取開拓建議。"
+                  )}
+               </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-4 border-t border-stone-400/50">
+              <div className="flex flex-col">
+                <span className="text-[9px] uppercase text-stone-500 font-bold tracking-tighter">Mission Reward</span>
+                <span className="text-amber-900 font-black text-base">{q.reward}</span>
+              </div>
+              <button className="px-5 py-2 bg-stone-900 text-white text-xs font-black hover:bg-stone-800 transition-colors shadow-sm">
+                接取委託
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // --- 區塊三：冒險者手冊 (開拓者生存指南) ---
+  const Handbook = () => {
+    return (
+      <div className="w-full max-w-4xl mx-auto space-y-12 animate-in fade-in duration-500 pb-20">
+        <div className="text-center space-y-2">
+          <div className="inline-block bg-stone-800 px-4 py-1 border border-amber-900/50 mb-2">
+            <span className="text-[10px] text-amber-600 font-mono uppercase tracking-[0.3em]">本頁為公會資產，嚴禁塗改</span>
+          </div>
+          <h3 className="text-3xl md:text-4xl font-black text-amber-500 uppercase italic tracking-tighter">
+            開拓者生存指南
+          </h3>
+          <p className="text-xs font-mono text-stone-500 tracking-widest uppercase">(The Pioneer's Codex v1.3)</p>
+        </div>
+
+        {/* 召集令區塊 */}
+        <section className={`p-8 ${parchmentBg} ${neubrutalismShadow} border-2 border-stone-800 relative overflow-hidden`}>
+           <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Scroll size={80} className="text-stone-900" />
+           </div>
+           <div className="max-w-2xl space-y-6">
+              <div className="space-y-2">
+                <h4 className="text-xl font-black text-stone-900 flex items-center gap-2">
+                   <Zap size={20} className="text-amber-800" /> 召集令
+                </h4>
+                <p className="text-sm text-stone-700 italic">「海風中夾雜著未知的位面頻率。冒險者，歡迎來到外木山海岸。」</p>
+              </div>
+              <div className="space-y-4 text-stone-800 font-medium">
+                 <p className="flex items-start gap-2 text-sm"><span className="text-amber-900 font-black">1.</span> 你已被選為「跨時空開拓者」，負責修復此區域不穩定的海域封印。</p>
+                 <p className="flex items-start gap-2 text-sm"><span className="text-amber-900 font-black">2.</span> 請按本指南行動，收集環境的擾動並轉化為「封印代碼」。</p>
+                 <p className="flex items-start gap-2 text-sm"><span className="text-amber-900 font-black">3.</span> 成功交回工單者，將獲得「永久守護者」身份授權。</p>
+              </div>
+              <div className="bg-amber-900/10 p-4 border-l-4 border-amber-800 flex items-start gap-3">
+                 <AlertCircle size={20} className="text-amber-900 shrink-0 mt-0.5" />
+                 <div>
+                    <p className="text-xs font-black text-amber-950 uppercase">操作指示 / 禁忌</p>
+                    <p className="text-xs text-amber-900">請勿在本指南留痕。所有數據請確實記錄於【PS 任務工單】中。</p>
+                 </div>
+              </div>
+           </div>
+        </section>
+
+        {/* 地脈系統區塊 */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+           <div className="space-y-4">
+              <h4 className="text-xl font-black text-amber-500 flex items-center gap-2 uppercase tracking-widest">
+                <Navigation size={20} /> 地脈掃描 (Leyline Map)
+              </h4>
+              <div className="bg-stone-800 border-2 border-stone-700 p-6 space-y-4 h-full">
+                 <p className="text-xs text-stone-400 font-mono uppercase border-b border-stone-700 pb-2">區域穩定度分級</p>
+                 <div className="space-y-3">
+                    <div className="flex items-start gap-3 group">
+                       <div className="w-4 h-4 rounded-full bg-[#0074D9] shadow-[0_0_8px_#0074D9] mt-1"></div>
+                       <div>
+                          <p className="text-sm font-bold text-white">穩定區 (Stable Zone)</p>
+                          <p className="text-[10px] text-stone-400 leading-relaxed">步道、指定沙灘，魔力平穩。建議在此執行環境觀測與紀錄。</p>
+                       </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                       <div className="w-4 h-4 rounded-full bg-yellow-400 shadow-[0_0_8px_yellow] mt-1"></div>
+                       <div>
+                          <p className="text-sm font-bold text-white">擾動區 (Disturbed Zone)</p>
+                          <p className="text-[10px] text-stone-400 leading-relaxed">接近水溝、礁岩，魔力起伏大。請謹慎通行並留意腳步。</p>
+                       </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                       <div className="w-4 h-4 rounded-full bg-red-600 shadow-[0_0_8px_red] animate-pulse mt-1"></div>
+                       <div>
+                          <p className="text-sm font-bold text-white">崩場區 (Collapsed Zone)</p>
+                          <p className="text-[10px] text-stone-400 leading-relaxed underline underline-offset-2">護牆外、消波塊。極度危險！進入將喪失守護者資格。</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           {/* Google Maps 區塊 */}
+           <div className={`relative min-h-[350px] bg-stone-900 border-2 border-amber-900/30 overflow-hidden ${neonBlueShadow}`}>
+              {/* 地圖標頭 UI */}
+              <div className="absolute top-0 left-0 w-full p-2 bg-stone-800/80 backdrop-blur-sm z-10 flex justify-between items-center border-b border-amber-900/30">
+                 <p className="text-[9px] text-amber-500 font-mono flex items-center gap-1 uppercase tracking-widest">
+                    <MapPin size={10} className="animate-bounce" /> 位面座標：基隆大武崙沙灘 (Leyline: Dawulun)
+                 </p>
+                 <div className="flex gap-1.5 items-center">
+                    <span className="text-[8px] text-green-500 font-mono animate-pulse">GPS_SYNC</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                 </div>
+              </div>
+              
+              <iframe 
+                 src="https://www.google.com/maps?q=基隆大武崙沙灘&hl=zh-TW&z=16&output=embed" 
+                 className="w-full h-full border-none opacity-90 filter grayscale-[0.2] brightness-90 contrast-110 hover:filter-none transition-all duration-700" 
+                 allowFullScreen="" 
+                 loading="lazy" 
+                 referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+
+              <div className="absolute bottom-4 left-4 pointer-events-none z-10">
+                 <div className="w-12 h-12 border-l-2 border-b-2 border-[#0074D9]/50"></div>
+              </div>
+              <div className="absolute top-12 right-4 pointer-events-none z-10">
+                 <div className="w-12 h-12 border-r-2 border-t-2 border-[#0074D9]/50"></div>
+              </div>
+           </div>
+        </section>
+
+        {/* 守護者法典 */}
+        <section className="space-y-6">
+           <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-amber-900/50"></div>
+              <h4 className="text-xl font-black text-amber-500 uppercase italic">守護者法典</h4>
+              <div className="h-px flex-1 bg-amber-900/50"></div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 行為準則 */}
+              <div className="bg-stone-800 border-2 border-stone-700 p-6 space-y-4">
+                 <h5 className="text-xs text-[#0074D9] font-black uppercase tracking-widest flex items-center gap-2">
+                    <CheckCircle2 size={14} /> 開拓者行為準則
+                 </h5>
+                 <ul className="space-y-3 text-sm text-stone-300">
+                    <li className="flex gap-2 font-medium">🛡️ <span className="text-white">守護：</span>在指定區域感受自然之美，維護海景原貌。</li>
+                    <li className="flex gap-2 font-medium">📡 <span className="text-white">偵測：</span>觀察但不解離，記錄但不更動。</li>
+                    <li className="flex gap-2 font-medium">🕯️ <span className="text-white">傳承：</span>帶走屬於你的垃圾，留下這片土地的純淨。</li>
+                 </ul>
+              </div>
+
+              {/* 海域禁忌 */}
+              <div className="bg-red-950/20 border-2 border-red-900/50 p-6 space-y-4">
+                 <h5 className="text-xs text-red-500 font-black uppercase tracking-widest flex items-center gap-2">
+                    <AlertTriangle size={14} /> 海域禁忌 (最嚴禁觸犯)
+                 </h5>
+                 <ul className="space-y-3 text-xs text-stone-300 italic">
+                    <li>❌ 超越警戒線或進入深淵 (進入大海)。</li>
+                    <li>❌ 隨意棄置連接口核物質 (丟棄垃圾)。</li>
+                    <li>❌ 破壞或偏移現場原有的提醒告示。</li>
+                 </ul>
+              </div>
+           </div>
+
+           {/* SOS 程序 */}
+           <div className="bg-stone-800 p-6 border border-amber-900/30">
+              <h5 className="text-xs text-amber-500 font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                 <Anchor size={14} /> 緊急回傳程序 (SOS)
+              </h5>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                 <div className="space-y-1">
+                    <p className="text-xs font-black text-white">脫離</p>
+                    <p className="text-[10px] text-stone-500">立即返回穩定區</p>
+                 </div>
+                 <div className="space-y-1 border-x border-stone-700">
+                    <p className="text-xs font-black text-white">回報</p>
+                    <p className="text-[10px] text-stone-500">告知現場公會幹事</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-xs font-black text-white">歸還</p>
+                    <p className="text-[10px] text-stone-500">返回集合點修復</p>
+                 </div>
+              </div>
+           </div>
+        </section>
+
+        <div className="flex flex-col items-center gap-4 text-center border-t border-stone-800 pt-8">
+           <div className="flex items-center gap-2 text-[10px] text-stone-600 font-mono tracking-widest">
+              <span>編碼：版本 v1.3</span>
+              <span className="opacity-30">|</span>
+              <span>序列號：WM-XXXX</span>
+           </div>
+           <p className="text-[10px] text-stone-700 italic max-w-sm">
+              「本指南承載著前代冒險者的記憶，回收後將傳承予下一位開拓者。」
+           </p>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-stone-900 text-stone-100 font-serif selection:bg-amber-600 selection:text-white">
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden opacity-10">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_4px,3px_100%]"></div>
+      </div>
+
+      <nav className="fixed top-0 z-40 w-full px-6 py-4 bg-stone-900/80 backdrop-blur-md border-b-2 border-amber-900/30 flex justify-between items-center">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setActiveTab('hall')}>
+          <div className="w-8 h-8 bg-amber-600 rounded flex items-center justify-center shadow-lg">
+             <Scroll size={18} className="text-stone-900" />
+          </div>
+          <span className="font-black tracking-widest text-amber-500 text-xs md:text-sm uppercase tracking-tighter">Guild_Terminal_v2</span>
+        </div>
+
+        <div className="hidden md:flex gap-10 items-center">
+          {[
+            { id: 'hall', label: '公會大廳', icon: <User size={14} /> },
+            { id: 'quests', label: '任務公告', icon: <Sword size={14} /> },
+            { id: 'handbook', label: '冒險手冊', icon: <BookOpen size={14} /> }
+          ].map(tab => (
+            <button 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-2 transition-all ${activeTab === tab.id ? 'text-amber-400 border-b-2 border-amber-400 pb-1' : 'text-stone-500 hover:text-white'}`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <button className="md:hidden text-amber-500" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </nav>
+
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-stone-950 p-12 flex flex-col gap-8 animate-in slide-in-from-top">
+          <button className="self-end text-amber-500" onClick={() => setIsMenuOpen(false)}><X size={32} /></button>
+          {['hall', 'quests', 'handbook'].map(id => (
+            <button 
+              key={id} 
+              onClick={() => { setActiveTab(id); setIsMenuOpen(false); }} 
+              className="text-4xl font-black text-left text-amber-500 border-b border-amber-900/30 pb-4 uppercase tracking-tighter"
+            >
+              {id === 'hall' ? '公會大廳' : id === 'quests' ? '任務公告' : '冒險手冊'}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <main className="container mx-auto pt-32 pb-24 px-6 min-h-screen">
+        {activeTab === 'hall' && <GuildHall />}
+        {activeTab === 'quests' && <QuestBoard />}
+        {activeTab === 'handbook' && <Handbook />}
+      </main>
+
+      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 flex bg-stone-800/90 border-2 border-amber-900/50 rounded-full p-2 gap-2 shadow-2xl backdrop-blur-md z-30">
+        <button onClick={() => setActiveTab('hall')} className={`p-3 rounded-full ${activeTab === 'hall' ? 'bg-amber-600 text-stone-900' : 'text-stone-500'}`}><User size={20} /></button>
+        <button onClick={() => setActiveTab('quests')} className={`p-3 rounded-full ${activeTab === 'quests' ? 'bg-amber-600 text-stone-900' : 'text-stone-500'}`}><Sword size={20} /></button>
+        <button onClick={() => setActiveTab('handbook')} className={`p-3 rounded-full ${activeTab === 'handbook' ? 'bg-amber-600 text-stone-900' : 'text-stone-500'}`}><BookOpen size={20} /></button>
+      </div>
+
+      <footer className="w-full py-8 bg-stone-950 text-center border-t border-amber-900/20">
+        <p className="text-[10px] font-mono text-stone-600 tracking-[0.4em] uppercase">
+          Coastline Education Protocol // Waimushan Guild
+        </p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
