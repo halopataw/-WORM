@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【海好有你】外木山沙灘的溫柔轉身</title>
+    <title>【海好有你】外木山沙灘的華麗轉身</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -39,6 +39,20 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--ocean-primary); border-radius: 10px; }
+        
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .menu-hidden {
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .menu-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body class="selection:bg-blue-200">
@@ -61,8 +75,17 @@
             <button onclick="switchTab('quests')" class="nav-link text-xs font-black uppercase tracking-widest relative opacity-50" id="nav-quests">守護行動</button>
             <button onclick="switchTab('handbook')" class="nav-link text-xs font-black uppercase tracking-widest relative opacity-50" id="nav-handbook">生態手冊</button>
         </div>
-        <button class="md:hidden p-2"><i data-lucide="menu"></i></button>
+        <button class="md:hidden p-2 text-[#1e3a8a]" onclick="toggleMenu()"><i data-lucide="menu" id="menu-icon"></i></button>
     </nav>
+
+    <!-- 手機版選單 -->
+    <div id="mobile-menu" class="fixed top-20 left-0 w-full z-40 bg-white border-b border-blue-50 shadow-xl md:hidden menu-hidden px-8 py-6">
+        <div class="flex flex-col gap-6 font-black italic text-2xl text-[#1e3a8a]">
+            <button onclick="switchTab('hall'); toggleMenu();" class="text-left">首頁大廳</button>
+            <button onclick="switchTab('quests'); toggleMenu();" class="text-left">守護行動</button>
+            <button onclick="switchTab('handbook'); toggleMenu();" class="text-left">生態手冊</button>
+        </div>
+    </div>
 
     <!-- 主內容區 -->
     <main class="container mx-auto pt-32 px-4 min-h-screen max-w-7xl">
@@ -77,71 +100,69 @@
             </div>
             <div class="text-center space-y-4">
                 <h1 class="text-4xl md:text-6xl font-black tracking-tight text-[#1e3a8a]">
-                    【海好有你】<br/><span class="text-blue-500">外木山沙灘的溫柔轉身</span>
+                    【海好有你】<br/><span class="text-blue-500">外木山沙灘的華麗轉身</span>
                 </h1>
-                <p class="text-slate-500 font-medium tracking-[0.3em] uppercase text-sm">Sustainable Coastal Co-Living Platform</p>
+                <p class="text-slate-500 font-medium tracking-[0.3em] uppercase text-sm italic">Stunning Coastal Revitalization Hub</p>
             </div>
             <div id="registration-gate" class="w-full max-w-sm bg-white p-8 rounded-[3rem] shadow-2xl border border-blue-50">
                 <div class="space-y-6 text-center">
-                    <p class="text-sm font-bold italic text-blue-900">「每一次的參與，都是海岸轉身的動力。」</p>
+                    <p class="text-sm font-bold italic text-blue-900 underline decoration-blue-200 decoration-4 underline-offset-8">「每一次參與，都是海岸華麗轉身的關鍵。」</p>
                     <input type="text" id="player-input" placeholder="請輸入您的稱呼..." class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold text-center outline-none transition-all">
-                    <button onclick="registerPlayer()" class="w-full py-4 ocean-gradient text-white font-black rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">啟動守護序列 <i data-lucide="chevron-right"></i></button>
+                    <button onclick="registerPlayer()" class="w-full py-4 ocean-gradient text-white font-black rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2">啟動守護序列 <i data-lucide="sparkles"></i></button>
                 </div>
             </div>
-            <div id="welcome-message" class="hidden flex flex-col items-center gap-8 w-full max-w-lg">
+            <div id="welcome-message" class="hidden flex flex-col items-center gap-8 w-full max-w-lg text-[#1e3a8a]">
                 <div class="px-8 py-3 bg-white border border-blue-100 rounded-full font-bold shadow-sm flex items-center gap-3">
                     <i data-lucide="user" class="text-blue-500"></i> 已識別守護者：<span id="display-name" class="text-blue-600"></span>
                 </div>
-                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full">進入行動方案</button>
+                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full">親見華麗成果</button>
             </div>
         </div>
 
         <!-- 守護行動 (Quests) -->
         <div id="view-quests" class="tab-view hidden space-y-12 animate-in slide-in-from-bottom-10">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-blue-100 pb-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-blue-100 pb-10 text-[#1e3a8a]">
                 <div class="text-center md:text-left">
-                    <h3 class="text-3xl font-black italic tracking-tighter serif">守護計畫公告 / Action Programs</h3>
-                    <p class="opacity-60 text-sm mt-2 font-medium">目前共開放 1 項守護行動</p>
+                    <h3 class="text-3xl font-black italic tracking-tighter serif">守護行動方案 / Action Programs</h3>
+                    <p class="opacity-60 text-sm mt-2 font-medium">目前共開放 1 項即時行動</p>
                 </div>
                 <div class="flex gap-6 bg-white p-5 rounded-3xl shadow-xl border border-blue-50">
                     <div class="flex items-center gap-3 border-r border-slate-100 pr-6">
                         <i data-lucide="waves" class="text-blue-500 animate-pulse"></i>
-                        <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase">浪高 Wave</span><span class="text-2xl font-black" id="mana-wave">1.7m</span></div>
+                        <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">浪高 Wave</span><span class="text-2xl font-black" id="mana-wave">1.7m</span></div>
                     </div>
                     <div class="flex items-center gap-3">
                         <i data-lucide="wind" class="text-emerald-500"></i>
-                        <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase">風速 Wind</span><span class="text-2xl font-black" id="mana-wind">11.9kts</span></div>
+                        <div class="flex flex-col"><span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">風速 Wind</span><span class="text-2xl font-black" id="mana-wind">11.9kts</span></div>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="quest-container">
-                <!-- 任務卡片將由 JS 生成 -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="quest-container"></div>
         </div>
 
         <!-- 生態手冊 (Handbook) -->
         <div id="view-handbook" class="tab-view hidden space-y-24 pb-32 animate-in fade-in">
             <div class="text-center space-y-6">
                 <i data-lucide="sun" class="w-16 h-16 mx-auto text-amber-500 opacity-80"></i>
-                <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter serif">海岸守護者筆記</h3>
+                <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter serif text-[#1e3a8a]">海岸守護者筆記</h3>
                 <p class="text-xs font-bold text-slate-500 uppercase tracking-[0.4em]">Ecological Archive // Keelung Waimushan</p>
                 <div class="w-24 h-1.5 bg-amber-500 mx-auto rounded-full shadow-sm"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 text-[#1e3a8a]">
                 <div class="space-y-8 flex flex-col h-full">
                     <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4">
                         <div class="p-3 ocean-gradient text-white rounded-2xl shadow-lg"><i data-lucide="waves"></i></div>
-                        <div><h4 class="text-2xl font-black italic serif">第一卷：海的脈動</h4><p class="text-[10px] font-bold uppercase text-blue-500 tracking-widest italic">Landscape Pulse</p></div>
+                        <div><h4 class="text-2xl font-black italic serif">第一卷：海的脈動</h4><p class="text-[10px] font-bold uppercase text-blue-500 tracking-widest italic font-sans">Landscape Pulse</p></div>
                     </div>
                     <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative">
                         <div class="absolute top-6 right-8 opacity-10"><i data-lucide="history" class="w-16 h-16"></i></div>
-                        <article class="space-y-6 text-[#1e3a8a] leading-relaxed">
-                            <p class="font-black text-xl border-l-4 border-amber-500 pl-4 italic">地景位面的分類</p>
-                            <ul class="space-y-6 text-sm">
-                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="text-blue-500 w-4 h-4"></i></div><p><strong>穩定棲地：</strong>步道、公共沙灘。此區魔力平穩，適合親子走讀。</p></li>
-                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0"><i data-lucide="help-circle" class="text-amber-500 w-4 h-4"></i></div><p><strong>擾動界限：</strong>潮間帶、礁岩交界。位面起伏大，請隨時留意足下潮汐。</p></li>
-                                <li class="flex gap-4 text-red-600"><div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="text-red-500 w-4 h-4"></i></div><p><strong>崩場禁區：</strong>消波塊外圍、深水區。極度危險。嚴禁未經授權越界。</p></li>
+                        <article class="space-y-6 leading-relaxed font-sans text-sm">
+                            <p class="font-black text-xl border-l-4 border-amber-500 pl-4 italic serif">地景位面的分類</p>
+                            <ul class="space-y-6">
+                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="text-blue-500 w-4 h-4"></i></div><p><strong>穩定棲地：</strong>步道、公共沙灘。此區頻率穩定，適合教育開拓。</p></li>
+                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0"><i data-lucide="help-circle" class="text-amber-500 w-4 h-4"></i></div><p><strong>擾動界限：</strong>潮間帶與礁岩邊緣。請隨時留意足下與潮汐高度。</p></li>
+                                <li class="flex gap-4 text-red-600 font-bold"><div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="text-red-500 w-4 h-4"></i></div><p><strong>崩場禁區：</strong>消波塊外圍深水區。嚴禁未經授權越界。</p></li>
                             </ul>
                         </article>
                     </div>
@@ -149,20 +170,19 @@
                 <div class="space-y-8 flex flex-col h-full">
                     <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4">
                         <div class="p-3 bg-emerald-500 text-white rounded-2xl shadow-lg"><i data-lucide="leaf"></i></div>
-                        <div><h4 class="text-2xl font-black italic serif">第二卷：守護法典</h4><p class="text-[10px] font-bold uppercase text-emerald-500 tracking-widest italic">Co-Living Protocol</p></div>
+                        <div><h4 class="text-2xl font-black italic serif">第二卷：守護法典</h4><p class="text-[10px] font-bold uppercase text-emerald-500 tracking-widest italic font-sans">Guardian Protocols</p></div>
                     </div>
                     <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative">
-                        <div class="absolute bottom-6 right-8 opacity-10"><i data-lucide="stamp" class="w-16 h-16"></i></div>
-                        <article class="space-y-6 text-[#1e3a8a] leading-relaxed">
-                            <p class="font-black text-xl border-l-4 border-emerald-500 pl-4 italic">無痕海岸 LNT 條約</p>
+                        <article class="space-y-6 leading-relaxed font-sans text-sm">
+                            <p class="font-black text-xl border-l-4 border-emerald-500 pl-4 italic serif">共生契約條款</p>
                             <div class="space-y-6">
-                                <div class="bg-white/60 p-6 rounded-2xl border-2 border-blue-50 shadow-sm text-xs">
+                                <div class="bg-white/60 p-6 rounded-2xl border-2 border-blue-50 shadow-sm">
                                     <h5 class="font-black flex items-center gap-2 mb-3 text-blue-800"><i data-lucide="check-circle-2" class="w-4 h-4"></i> 行為準則</h5>
-                                    <p class="opacity-80">1. 偵測而不解離：觀察但不隨意移動貝殼或岩石。<br/>2. 傳承純淨脈絡：帶走所有外來物，不留任何痕跡。<br/>3. 尊重位面原住民：不干擾海岸邊界的生物。</p>
+                                    <p class="opacity-80">不解離自然封印、帶走異界物質(垃圾)、尊重海岸原住民生物。</p>
                                 </div>
-                                <div class="bg-red-50/50 p-6 rounded-2xl border-2 border-red-100 shadow-sm text-xs">
-                                    <h5 class="font-black flex items-center gap-2 mb-3 text-red-800"><i data-lucide="zap" class="w-4 h-4"></i> 緊急程序 (SOS)</h5>
-                                    <p class="text-red-700 font-bold italic">若遇緊急狀況，依循「脫離」-「回報」-「返回」之序列行動。</p>
+                                <div class="bg-red-50/50 p-6 rounded-2xl border-2 border-red-100 shadow-sm">
+                                    <h5 class="font-black flex items-center gap-2 mb-3 text-red-800"><i data-lucide="zap" class="w-4 h-4"></i> 緊急 SOS 程序</h5>
+                                    <p class="text-red-700 font-bold">依照「脫離」{' -> '}「回報」{' -> '}「返回」之序列行動。</p>
                                 </div>
                             </div>
                         </article>
@@ -170,69 +190,58 @@
                 </div>
             </div>
 
-            <!-- 地圖區域：大武崙白沙灘精準定位 -->
-            <section class="space-y-10 px-4">
+            <!-- ✨ 地圖區域：已移除「同步紅釘定位」按鈕 -->
+            <section class="space-y-10 px-4 text-[#1e3a8a]">
                 <div class="text-center">
-                    <h4 class="text-2xl font-black italic flex items-center justify-center gap-3"><i data-lucide="map-pin" class="text-red-600"></i> 即時座標系統 (大武崙白沙灘)</h4>
+                    <h4 class="text-2xl font-black italic flex items-center justify-center gap-3 serif"><i data-lucide="map-pin" class="text-red-600"></i> 華麗轉身座標系統 (大武崙白沙灘)</h4>
                     <div class="w-12 h-1 bg-blue-100 mx-auto mt-4 rounded-full"></div>
                 </div>
                 <div class="bg-white p-3 rounded-[3.5rem] shadow-2xl border border-blue-50 relative overflow-hidden group">
-                    <!-- 校準後的紅圖釘地圖 -->
                     <iframe 
                         id="google-map"
                         title="大武崙白沙灘"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1805.9351!2d121.7107!3d25.1687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4e6884d4e681%3A0x6884d4e6816884d4!2z5aSW5pyo5bGx5rKZ54G_!5e0!3m2!1szh-TW!2stw!4v1711252000000!5m2!1szh-TW!2stw" 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1805.9351!2d121.71078!3d25.1687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4be349dfc3b5%3A0xe54e6b2c7f5c7!2z5aSn5q2m5Yqx5rKZ54GY!5e0!3m2!1szh-TW!2stw!4v1711252000000!5m2!1szh-TW!2stw" 
                         class="w-full h-[550px] border-none rounded-[2.5rem] opacity-95 transition-all duration-700" 
                         allowfullscreen="" loading="lazy">
                     </iframe>
-                    <div class="absolute bottom-10 left-10 z-10">
-                        <a href="https://maps.app.goo.gl/uXvF48hY3v9x8D1Y7" target="_blank" class="flex items-center gap-3 bg-white text-blue-900 px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest shadow-2xl border border-blue-100 hover:scale-105 transition-all active:scale-95">
-                            <i data-lucide="map-pin" class="text-red-600 w-4 h-4"></i> 在 Google 地圖同步紅釘定位
-                        </a>
-                    </div>
                 </div>
             </section>
         </div>
 
         <!-- 報名契約 (Registration) -->
-        <div id="view-registration" class="tab-view hidden space-y-12 animate-in slide-in-from-right-10 pb-24">
+        <div id="view-registration" class="tab-view hidden space-y-12 animate-in slide-in-from-right-10 pb-24 text-[#1e3a8a]">
             <div class="flex items-center gap-6">
-                <button onclick="switchTab('quests')" class="p-3 bg-white text-blue-500 rounded-full shadow-lg border border-blue-50 hover:bg-blue-50"><i data-lucide="chevron-left"></i></button>
-                <div><h3 class="text-3xl font-black italic serif">守護者報名契約</h3><p class="text-xs opacity-60 font-black uppercase tracking-widest">Digital Registration Contract</p></div>
+                <button onclick="switchTab('quests')" class="p-3 bg-white text-blue-500 rounded-full shadow-lg border border-blue-50 hover:bg-blue-50 transition-all"><i data-lucide="chevron-left"></i></button>
+                <div><h3 class="text-3xl font-black italic serif">華麗轉身：行動契約</h3><p class="text-xs opacity-60 font-black uppercase tracking-widest italic font-sans">Registration Protocol</p></div>
             </div>
             <div id="registration-success" class="hidden w-full max-w-xl mx-auto py-20 text-center animate-in zoom-in-95">
                 <div class="inline-flex p-10 bg-emerald-50 rounded-full border-4 border-emerald-500 mb-10 shadow-2xl"><i data-lucide="check" class="text-emerald-500 w-20 h-20"></i></div>
-                <h2 class="text-4xl font-black text-[#1e3a8a] mb-6 serif">歡迎加入，守護者！</h2>
-                <p class="text-slate-500 leading-relaxed mb-12 text-lg italic">「報名資料已成功寫入靈脈。5/2 讓我們一起在海岸轉身。」</p>
-                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:scale-105 transition-all">返回課程方案</button>
+                <h2 class="text-4xl font-black mb-6 serif">歡迎加入，守護者！</h2>
+                <p class="text-slate-500 leading-relaxed mb-12 text-lg italic">「契約已成功注入靈脈。5/2 讓我們一起見證外木山的華麗轉身。」</p>
+                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:scale-105 transition-all">返回行動清單</button>
             </div>
             <section id="registration-form-box" class="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-blue-50 relative overflow-hidden">
                 <div class="flex items-center gap-8 border-b border-slate-100 pb-8 mb-10">
                     <div id="reg-level" class="w-20 h-20 rounded-3xl ocean-gradient text-white font-black flex items-center justify-center text-3xl shadow-xl">初階</div>
                     <div class="flex-1">
-                        <p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2 font-mono">Current Action</p>
+                        <p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2 font-mono italic">Selected Chapter</p>
                         <h4 id="reg-title" class="text-2xl font-black leading-tight mb-2">海岸公民練習曲</h4>
-                        <div class="flex gap-6 text-sm font-bold opacity-60"><p class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i> 5/2 (六)</p><p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> 外木山現場</p></div>
+                        <div class="flex gap-6 text-sm font-bold opacity-60 font-sans"><p class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i> 5/2 (六)</p><p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4"></i> 外木山沙灘</p></div>
                     </div>
                 </div>
-                <form onsubmit="submitForm(event)" class="space-y-12">
+                <form onsubmit="submitForm(event)" class="space-y-12 font-sans text-stone-900">
                     <div class="space-y-8">
-                        <div class="flex items-center gap-3"><div class="w-3 h-8 bg-blue-500 rounded-full"></div><p class="text-sm font-black uppercase tracking-widest">個人基本資料</p></div>
+                        <div class="flex items-center gap-3 text-[#1e3a8a]"><div class="w-3 h-8 bg-blue-500 rounded-full"></div><p class="text-sm font-black uppercase tracking-widest">個人基本數據庫</p></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">姓名 *</label><input required type="text" id="form-name" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner"></div>
-                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">身分證字號 *</label><input required type="text" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner"></div>
-                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">聯絡電話 *</label><input required type="tel" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner"></div>
-                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">常用的 Email *</label><input required type="email" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner"></div>
+                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">姓名 *</label><input required type="text" id="form-name" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all"></div>
+                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">身分證字號 *</label><input required type="text" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all"></div>
+                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">聯絡電話 *</label><input required type="tel" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all"></div>
+                            <div class="space-y-2"><label class="text-xs font-black text-slate-400">常用的 Email *</label><input required type="email" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all"></div>
                         </div>
                     </div>
-                    <div class="bg-blue-50 p-8 rounded-[2rem] border-l-8 border-blue-500 shadow-sm">
-                        <label class="flex items-start gap-4 cursor-pointer select-none">
-                            <input required type="checkbox" class="mt-1.5 w-6 h-6 accent-[#1e3a8a]">
-                            <span class="text-sm leading-relaxed font-bold italic">我已詳閱守護者規則：在參與過程中保持謙卑，遵循安全導引，實踐「不留痕跡」的共生承諾。</span>
-                        </label>
-                    </div>
-                    <button type="submit" id="submit-btn" class="w-full py-6 ocean-gradient text-white font-black uppercase tracking-[0.2em] text-xl rounded-3xl shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-4">
-                        <i data-lucide="heart" class="w-6 h-6"></i> 授權並提交契約
+                    <div class="bg-blue-50 p-8 rounded-[2rem] border-l-8 border-blue-500 shadow-sm text-[#1e3a8a]"><label class="flex items-start gap-4 cursor-pointer select-none"><input required type="checkbox" class="mt-1.5 w-6 h-6 accent-[#1e3a8a] shrink-0" /><span class="text-sm leading-relaxed font-bold italic">我已詳閱守護者規則：在華麗轉身的過程中保持謙卑，遵循安全導引，實踐永續海岸承諾。</span></label></div>
+                    <button type="submit" id="submit-btn" class="w-full py-6 ocean-gradient text-white font-black uppercase tracking-[0.2em] text-xl rounded-3xl shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-4 active:scale-95">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i> 授權並提交契約
                     </button>
                 </form>
             </section>
@@ -240,45 +249,55 @@
 
     </main>
 
-    <footer class="w-full py-12 bg-white text-center border-t border-blue-50 mt-20">
-        <div class="flex justify-center gap-10 mb-6 opacity-40">
+    <footer class="w-full py-12 bg-white text-center border-t border-blue-50 mt-20 font-sans">
+        <div class="flex justify-center gap-10 mb-6 opacity-40 text-[#1e3a8a]">
             <i data-lucide="heart"></i><i data-lucide="waves"></i><i data-lucide="sun"></i>
         </div>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em]">Island Dwellers Studio // Coastline Ecology // Keelung</p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em]">Island Dwellers Studio // Gorgeous Transformation // Keelung</p>
     </footer>
 
     <script>
-        // 初始化圖標
         lucide.createIcons();
-
-        // 狀態管理
         let currentPlayer = "";
         let selectedQuest = null;
+        let isMenuOpen = false;
 
-        // 切換頁籤
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (isMenuOpen) {
+                menu.classList.remove('menu-hidden');
+                menu.classList.add('menu-visible');
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                menu.classList.add('menu-hidden');
+                menu.classList.remove('menu-visible');
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            
             document.querySelectorAll('.nav-link').forEach(link => link.classList.add('opacity-50'));
             const activeNav = document.getElementById(`nav-${tabId}`);
             if(activeNav) activeNav.classList.remove('opacity-50');
-            
             window.scrollTo(0, 0);
         }
 
-        // 玩家註冊
         function registerPlayer() {
             const input = document.getElementById('player-input');
             if(input.value.trim() === "") return;
             currentPlayer = input.value;
             document.getElementById('display-name').innerText = currentPlayer;
-            document.getElementById('form-name').value = currentPlayer;
+            const formNameInput = document.getElementById('form-name');
+            if(formNameInput) formNameInput.value = currentPlayer;
             document.getElementById('registration-gate').classList.add('hidden');
             document.getElementById('welcome-message').classList.remove('hidden');
         }
 
-        // 生成任務卡片
         const questData = [
             { id: '01', isOpen: true, title: '海岸公民練習曲：沙灘觀察與環境行動', time: '5/2 (六) 09:00-16:30', location: '大武崙白沙灘 / 德育校區', level: '初階', reward: '50 G' },
             { id: '02', isOpen: false, title: '海岸變奏曲：氣候變遷與海岸線的故事', time: '5/9 (六) 09:00-12:00', location: '室內教室', level: '中階', reward: '100 G' },
@@ -294,6 +313,7 @@
 
         function renderQuests() {
             const container = document.getElementById('quest-container');
+            if(!container) return;
             container.innerHTML = questData.map(q => `
                 <div class="relative rounded-[2.5rem] border-2 transition-all duration-500 overflow-hidden flex flex-col min-h-[420px] ${q.isOpen ? 'bg-white border-blue-50 shadow-xl hover:border-blue-500' : 'bg-slate-100 opacity-60 grayscale cursor-not-allowed'}">
                     ${!q.isOpen ? '<div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex flex-col items-center justify-center z-20"><i data-lucide="lock" class="text-slate-400 mb-2"></i><span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Locked</span></div>' : ''}
@@ -302,12 +322,12 @@
                             <span class="px-4 py-1 rounded-full text-[10px] font-black border-2 ${q.isOpen ? 'border-blue-500 text-blue-500' : 'border-slate-300 text-slate-400'}">${q.level}</span>
                             <span class="text-[10px] font-bold text-slate-400 font-mono">#${q.id}</span>
                         </div>
-                        <h4 class="text-xl font-black leading-tight mb-4 ${!q.isOpen ? 'opacity-40' : ''}">${q.title}</h4>
-                        <div class="space-y-2 mb-8 text-slate-500 text-xs font-bold">
+                        <h4 class="text-xl font-black leading-tight mb-4 text-[#1e3a8a] ${!q.isOpen ? 'opacity-40' : ''}">${q.title}</h4>
+                        <div class="space-y-2 mb-8 text-slate-500 text-xs font-bold font-sans">
                             <p class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-blue-400"></i> ${q.time}</p>
                             <p class="flex items-start gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-blue-400"></i> ${q.location}</p>
                         </div>
-                        <div class="mt-auto flex justify-between items-center pt-6 border-t border-slate-50">
+                        <div class="mt-auto flex justify-between items-center pt-6 border-t border-slate-50 font-sans">
                             <span class="text-lg font-black text-blue-900">${q.isOpen ? q.reward : '---'}</span>
                             <button ${!q.isOpen ? 'disabled' : `onclick="openRegistration('${q.id}')"`} class="px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all ${q.isOpen ? 'ocean-gradient text-white shadow-lg' : 'bg-slate-300 text-white'}">
                                 ${q.isOpen ? '我要報名' : '尚未開啟'}
@@ -333,14 +353,12 @@
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> 正在傳送契約...';
             lucide.createIcons();
-            
             setTimeout(() => {
                 document.getElementById('registration-form-box').classList.add('hidden');
                 document.getElementById('registration-success').classList.remove('hidden');
             }, 1500);
         }
 
-        // 動態海象
         setInterval(() => {
             const w = (1.7 + (Math.random() * 0.4 - 0.2)).toFixed(1);
             const s = (11.9 + (Math.random() * 1.0 - 0.5)).toFixed(1);
