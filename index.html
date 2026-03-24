@@ -55,19 +55,19 @@
     </div>
 
     <!-- 導航列 -->
-    <nav class="fixed top-0 z-50 w-full px-6 py-4 bg-white/80 backdrop-blur-xl border-b border-blue-50 flex justify-between items-center shadow-sm">
+    <nav class="fixed top-0 z-50 w-full px-6 py-4 bg-white/80 backdrop-blur-xl border-b border-blue-50 flex justify-between items-center shadow-sm text-[#1e3a8a]">
         <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('hall')">
             <div class="w-10 h-10 ocean-gradient rounded-2xl flex items-center justify-center shadow-lg transform hover:rotate-12 transition-all">
                 <i data-lucide="waves" class="text-white w-6 h-6"></i>
             </div>
-            <span class="font-black text-xl tracking-tighter italic">Sea Good ✨</span>
+            <span class="font-black text-xl tracking-tighter italic font-sans text-[#1e3a8a]">Sea Good ✨</span>
         </div>
-        <div class="hidden md:flex gap-8">
+        <div class="hidden md:flex gap-8 font-sans">
             <button onclick="switchTab('hall')" class="nav-link text-xs font-black uppercase tracking-widest relative opacity-100" id="nav-hall">首頁</button>
             <button onclick="switchTab('quests')" class="nav-link text-xs font-black uppercase tracking-widest relative opacity-50" id="nav-quests">行動</button>
             <button onclick="switchTab('handbook')" class="nav-link text-xs font-black uppercase tracking-widest relative opacity-50" id="nav-handbook">手冊</button>
             <button onclick="switchTab('admin')" class="nav-link flex items-center gap-1 text-[10px] font-black uppercase bg-slate-100 px-3 py-1 rounded-lg opacity-50 hover:bg-slate-200" id="nav-admin">
-                <i data-lucide="lock" class="w-3 h-3"></i> 管理
+                <i data-lucide="lock" class="w-3 h-3"></i> 管理端
             </button>
         </div>
         <button class="md:hidden p-2 text-[#1e3a8a]" onclick="toggleMenu()"><i data-lucide="menu" id="menu-icon"></i></button>
@@ -75,11 +75,11 @@
 
     <!-- 手機版選單 -->
     <div id="mobile-menu" class="fixed top-20 left-0 w-full z-40 bg-white border-b border-blue-50 shadow-xl md:hidden menu-hidden px-8 py-6 text-[#1e3a8a]">
-        <div class="flex flex-col gap-6 font-black italic text-2xl">
+        <div class="flex flex-col gap-6 font-black italic text-2xl font-sans">
             <button onclick="switchTab('hall'); toggleMenu();">首頁大廳</button>
             <button onclick="switchTab('quests'); toggleMenu();">守護行動</button>
             <button onclick="switchTab('handbook'); toggleMenu();">生態手冊</button>
-            <button onclick="switchTab('admin'); toggleMenu();" class="text-blue-500 flex items-center gap-2">數據管理 <i data-lucide="lock"></i></button>
+            <button onclick="switchTab('admin'); toggleMenu();" class="text-blue-500 flex items-center gap-2">數據中心 <i data-lucide="lock"></i></button>
         </div>
     </div>
 
@@ -94,28 +94,28 @@
                     <i data-lucide="waves" class="text-blue-500 w-32 h-32 opacity-80"></i>
                 </div>
             </div>
-            <div class="text-center space-y-4">
+            <div class="text-center space-y-4 font-sans">
                 <h1 class="text-4xl md:text-6xl font-black tracking-tight">
                     【海好有你】<br/><span class="text-blue-500">外木山沙灘的華麗轉身</span>
                 </h1>
-                <p class="text-slate-500 font-medium tracking-[0.3em] uppercase text-sm italic">Gorgeous Coastal Revitalization</p>
+                <p class="text-slate-500 font-medium tracking-[0.3em] uppercase text-sm italic">Empowering Coastal Brilliance</p>
             </div>
-            <div id="registration-gate" class="w-full max-w-sm bg-white p-8 rounded-[3rem] shadow-2xl border border-blue-50 text-center">
+            <div id="registration-gate" class="w-full max-w-sm bg-white p-8 rounded-[3rem] shadow-2xl border border-blue-50 text-center font-sans">
                 <p class="text-sm font-bold italic underline decoration-blue-200 decoration-4 underline-offset-8 mb-6">「每一次參與，都是海岸華麗轉身的關鍵。」</p>
                 <input type="text" id="player-input" placeholder="請輸入您的稱呼..." class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-2xl font-bold text-center outline-none transition-all">
-                <button onclick="registerPlayer()" class="w-full py-4 mt-6 ocean-gradient text-white font-black rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-sans">啟動守護序列 <i data-lucide="sparkles"></i></button>
+                <button onclick="registerPlayer()" class="w-full py-4 mt-6 ocean-gradient text-white font-black rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs">啟動守護序列 <i data-lucide="sparkles"></i></button>
             </div>
-            <div id="welcome-message" class="hidden flex flex-col items-center gap-8 w-full max-w-lg">
+            <div id="welcome-message" class="hidden flex flex-col items-center gap-8 w-full max-w-lg font-sans">
                 <div class="px-8 py-3 bg-white border border-blue-100 rounded-full font-bold shadow-sm flex items-center gap-3">
                     <i data-lucide="user" class="text-blue-500"></i> 已識別守護者：<span id="display-name" class="text-blue-600"></span>
                 </div>
-                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full">親見華麗成果</button>
+                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full uppercase">親見華麗成果</button>
             </div>
         </div>
 
         <!-- 守護行動 -->
         <div id="view-quests" class="tab-view hidden space-y-12 animate-in slide-in-from-bottom-10">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-blue-100 pb-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-blue-100 pb-10 font-sans">
                 <div class="text-center md:text-left">
                     <h3 class="text-3xl font-black italic tracking-tighter serif">行動方案 / Programs</h3>
                     <p class="opacity-60 text-sm mt-2 font-medium">目前共開放 1 項即時行動</p>
@@ -131,11 +131,11 @@
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="quest-container"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 font-sans" id="quest-container"></div>
         </div>
 
         <!-- 生態手冊 -->
-        <div id="view-handbook" class="tab-view hidden space-y-24 pb-32 animate-in fade-in font-sans text-[#1e3a8a]">
+        <div id="view-handbook" class="tab-view hidden space-y-24 pb-32 animate-in fade-in font-sans">
             <div class="text-center space-y-6">
                 <i data-lucide="sun" class="w-16 h-16 mx-auto text-amber-500 opacity-80"></i>
                 <h3 class="text-4xl md:text-6xl font-black italic tracking-tighter serif">海岸守護者筆記</h3>
@@ -143,76 +143,69 @@
                 <div class="w-24 h-1.5 bg-amber-500 mx-auto rounded-full shadow-sm"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 font-sans">
-                <div class="space-y-8 flex flex-col h-full">
-                    <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 font-sans text-[#1e3a8a]">
+                <div class="space-y-8 flex flex-col h-full font-sans">
+                    <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4 font-sans text-[#1e3a8a]">
                         <div class="p-3 ocean-gradient text-white rounded-2xl shadow-lg"><i data-lucide="waves"></i></div>
                         <div><h4 class="text-2xl font-black italic serif">第一卷：海的脈動</h4><p class="text-[10px] font-bold uppercase text-blue-500 tracking-widest italic font-sans">Landscape Pulse</p></div>
                     </div>
-                    <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative font-sans">
+                    <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative font-sans text-[#1e3a8a]">
                         <div class="absolute top-6 right-8 opacity-10"><i data-lucide="history" class="w-16 h-16"></i></div>
                         <article class="space-y-6 leading-relaxed font-sans text-sm">
                             <p class="font-black text-xl border-l-4 border-amber-500 pl-4 italic serif">地景位面的分類</p>
-                            <ul class="space-y-6">
-                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0"><i data-lucide="shield-check" class="text-blue-500 w-4 h-4"></i></div><p><strong>穩定棲地 (Stable Blue)</strong>步道、公共沙灘。適合教育觀測與親子走讀。</p></li>
-                                <li class="flex gap-4"><div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0"><i data-lucide="help-circle" class="text-amber-500 w-4 h-4"></i></div><p><strong>擾動界限 (Disturbed Sand)</strong>潮間帶與礁岩邊緣。受潮汐干涉，請隨時留意足下與潮水。</p></li>
-                                <li class="flex gap-4 text-red-600 font-bold"><div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="text-red-500 w-4 h-4"></i></div><p><strong>崩場禁區 (Collapsed Red)</strong>消波塊外圍深水區。具備物理危險。嚴禁越界。</p></li>
+                            <ul class="space-y-6 font-sans">
+                                <li class="flex gap-4 font-sans"><div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0 font-sans"><i data-lucide="shield-check" class="text-blue-500 w-4 h-4"></i></div><p><strong>穩定棲地 (Stable Blue)</strong>步道、公共沙灘。適合教育觀測與親子走讀。</p></li>
+                                <li class="flex gap-4 font-sans"><div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 font-sans"><i data-lucide="help-circle" class="text-amber-500 w-4 h-4"></i></div><p><strong>擾動界限 (Disturbed Sand)</strong>潮間帶與礁岩邊緣。受潮汐干涉，請謹慎足下與潮水。</p></li>
                             </ul>
                         </article>
                     </div>
                 </div>
 
-                <div class="space-y-8 flex flex-col h-full font-sans">
-                    <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4">
+                <div class="space-y-8 flex flex-col h-full font-sans text-[#1e3a8a]">
+                    <div class="flex items-center gap-4 border-b-2 border-blue-100 pb-4 font-sans">
                         <div class="p-3 bg-emerald-500 text-white rounded-2xl shadow-lg"><i data-lucide="leaf"></i></div>
-                        <div><h4 class="text-2xl font-black italic serif">第二卷：守護法典</h4><p class="text-[10px] font-bold uppercase text-emerald-500 tracking-widest italic font-sans">Co-Living Protocol</p></div>
+                        <div><h4 class="text-2xl font-black italic serif font-sans">第二卷：守護法典</h4><p class="text-[10px] font-bold uppercase text-emerald-500 tracking-widest italic font-sans">Co-Living Protocol</p></div>
                     </div>
-                    <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative">
-                        <div class="absolute bottom-6 right-8 opacity-10"><i data-lucide="stamp" class="w-16 h-16"></i></div>
-                        <article class="space-y-8 leading-relaxed font-sans text-sm">
+                    <div class="p-10 paper-texture rounded-[3rem] shadow-2xl border border-blue-50 flex-1 relative font-sans text-[#1e3a8a]">
+                        <div class="absolute bottom-6 right-8 opacity-10 font-sans"><i data-lucide="stamp" class="w-16 h-16"></i></div>
+                        <article class="space-y-8 leading-relaxed font-sans text-sm text-[#1e3a8a]">
                             <p class="font-black text-xl border-l-4 border-emerald-500 pl-4 italic serif">共生契約行為準則</p>
-                            
-                            <!-- ✨ 豐富後的行為準則文字 -->
                             <div class="space-y-8 font-sans">
-                                <div class="flex gap-4 group">
-                                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors"><i data-lucide="lock" class="w-5 h-5 text-blue-600"></i></div>
-                                    <div class="space-y-2">
-                                        <h5 class="font-black text-base">守護自然封印</h5>
-                                        <p class="opacity-70 leading-relaxed">每一顆礁石、每一枚貝殼皆是海岸跨越千年的記憶刻痕。我們承諾不解離、不攜走任何屬於自然的資產，讓它們留在原始的位面，守護外木山最純粹的生態靈脈。</p>
+                                <div class="flex gap-4 group font-sans">
+                                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0 font-sans"><i data-lucide="lock" class="w-5 h-5 text-blue-600"></i></div>
+                                    <div class="space-y-2 font-sans">
+                                        <h5 class="font-black text-base font-sans">守護自然封印</h5>
+                                        <p class="opacity-70 leading-relaxed font-sans">礁石、貝殼皆是海岸跨越千年的記憶。我們承諾不解離、不攜走任何自然資產，守護外木山最純粹的靈脈。</p>
                                     </div>
                                 </div>
-
-                                <div class="flex gap-4 group">
-                                    <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition-colors"><i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i></div>
-                                    <div class="space-y-2">
-                                        <h5 class="font-black text-base">靈脈淨化行動</h5>
-                                        <p class="opacity-70 leading-relaxed">主動清除不屬於大海的「異界物質」。我們不僅是觀察者，更是淨化者；透過雙手帶走海廢垃圾，修復受損的環境紋理，讓這場「華麗轉身」建立在潔淨的基礎之上。</p>
+                                <div class="flex gap-4 group font-sans">
+                                    <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 font-sans"><i data-lucide="sparkles" class="w-5 h-5 text-emerald-600"></i></div>
+                                    <div class="space-y-2 font-sans">
+                                        <h5 class="font-black text-base font-sans">靈脈淨化行動</h5>
+                                        <p class="opacity-70 leading-relaxed font-sans">清除異界物質。透過雙手帶走海廢垃圾，修復環境紋理，讓華麗轉身建立在潔淨基礎之上。</p>
                                     </div>
                                 </div>
-
-                                <div class="flex gap-4 group">
-                                    <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0 group-hover:bg-amber-100 transition-colors"><i data-lucide="heart" class="w-5 h-5 text-amber-600"></i></div>
-                                    <div class="space-y-2">
-                                        <h5 class="font-black text-base">謙卑共生承諾</h5>
-                                        <p class="opacity-70 leading-relaxed">深切尊重海岸原住民生物。我們僅是短暫的造訪者，承諾不驚擾、不餵食，並維持適度的觀察距離。在生命的躍動中學會低調優雅，與海洋萬物達成最溫柔的共生協議。</p>
+                                <div class="flex gap-4 group font-sans">
+                                    <div class="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0 font-sans"><i data-lucide="heart" class="w-5 h-5 text-amber-600"></i></div>
+                                    <div class="space-y-2 font-sans">
+                                        <h5 class="font-black text-base font-sans">謙卑共生承諾</h5>
+                                        <p class="opacity-70 leading-relaxed font-sans">尊重原住民生物。我們僅是短暫的造訪者，不驚擾、不餵食，與海洋萬物達成最優雅的共生協議。</p>
                                     </div>
                                 </div>
                             </div>
-
-                            <p class="text-[10px] text-slate-400 italic mt-8 border-t border-blue-50 pt-4 font-sans text-center">※ 本法典記載之守護意志，將成為華麗轉身的核心動能。</p>
                         </article>
                     </div>
                 </div>
             </div>
 
             <!-- 地圖區域 -->
-            <section class="space-y-10 px-4">
-                <div class="text-center font-sans">
-                    <h4 class="text-2xl font-black italic flex items-center justify-center gap-3 serif font-sans text-[#1e3a8a]"><i data-lucide="map-pin" class="text-red-600"></i> 華麗轉身座標系統 (大武崙白沙灘)</h4>
+            <section class="space-y-10 px-4 font-sans text-[#1e3a8a]">
+                <div class="text-center">
+                    <h4 class="text-2xl font-black italic flex items-center justify-center gap-3 serif"><i data-lucide="map-pin" class="text-red-600"></i> 華麗轉身座標系統 (大武崙白沙灘)</h4>
                     <div class="w-12 h-1 bg-blue-100 mx-auto mt-4 rounded-full"></div>
                 </div>
-                <div class="bg-white p-3 rounded-[3.5rem] shadow-2xl border border-blue-50 relative overflow-hidden group">
-                    <iframe id="google-map" title="大武崙白沙灘" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1805.9351!2d121.7067944!3d25.1656071!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4c3266659627%3A0xea5db9ca8e5767c2!2z5aSn5q2m5Yqx55m95rKZ54GY!5e0!3m2!1szh-TW!2stw!4v1711252000000!5m2!1szh-TW!2stw" class="w-full h-[550px] border-none rounded-[2.5rem] opacity-95 transition-all duration-700 grayscale-[0.1] contrast-110 group-hover:grayscale-0" allowfullscreen="" loading="lazy"></iframe>
+                <div class="bg-white p-3 rounded-[3.5rem] shadow-2xl border border-blue-50 relative overflow-hidden group font-sans text-[#1e3a8a]">
+                    <iframe id="google-map" title="大武崙白沙灘" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1805.9351!2d121.7067944!3d25.1656071!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4c3266659627%3A0xea5db9ca8e5767c2!2z5aSn5q2m5Yqx55m95rKZ54GY!5e0!3m2!1szh-TW!2stw!4v1711252000000!5m2!1szh-TW!2stw" class="w-full h-[550px] border-none rounded-[2.5rem] opacity-95 transition-all duration-700 grayscale-[0.1] contrast-110 group-hover:grayscale-0 font-sans text-[#1e3a8a]" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </section>
         </div>
@@ -220,34 +213,34 @@
         <!-- 報名契約 (Registration) -->
         <div id="view-registration" class="tab-view hidden space-y-12 animate-in slide-in-from-right-10 pb-24 text-[#1e3a8a] font-sans">
             <div class="flex items-center gap-6 font-sans">
-                <button onclick="switchTab('quests')" class="p-3 bg-white text-blue-500 rounded-full shadow-lg border border-blue-50 hover:bg-blue-50 transition-all font-sans"><i data-lucide="chevron-left"></i></button>
-                <div class="font-sans"><h3 class="text-3xl font-black italic serif text-[#1e3a8a]">華麗轉身：守護契約</h3><p class="text-xs opacity-60 font-black uppercase tracking-widest italic font-sans text-[#1e3a8a]">Digital Registration Contract</p></div>
+                <button onclick="switchTab('quests')" class="p-3 bg-white text-blue-500 rounded-full shadow-lg border border-blue-50 hover:bg-blue-50 transition-all"><i data-lucide="chevron-left"></i></button>
+                <div class="font-sans text-[#1e3a8a]"><h3 class="text-3xl font-black italic serif text-[#1e3a8a]">華麗轉身：行動契約</h3><p class="text-xs opacity-60 font-black uppercase tracking-widest italic font-sans">Digital Registration Contract</p></div>
             </div>
             <div id="registration-success" class="hidden w-full max-w-xl mx-auto py-20 text-center animate-in zoom-in-95 font-sans">
-                <div class="inline-flex p-10 bg-emerald-50 rounded-full border-4 border-emerald-500 mb-10 shadow-2xl font-sans"><i data-lucide="check" class="text-emerald-500 w-20 h-20"></i></div>
-                <h2 class="text-4xl font-black mb-6 serif text-[#1e3a8a]">歡迎加入，守護者！</h2>
-                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:scale-105 transition-all font-sans uppercase tracking-widest">返回行動清單</button>
+                <div class="inline-flex p-10 bg-emerald-50 rounded-full border-4 border-emerald-500 mb-10 shadow-2xl font-sans"><i data-lucide="check" class="text-emerald-500 w-20 h-20 font-sans"></i></div>
+                <h2 class="text-4xl font-black mb-6 serif text-[#1e3a8a] font-sans">歡迎加入，守護者！</h2>
+                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:scale-105 transition-all uppercase tracking-widest font-sans">返回行動清單</button>
             </div>
             <section id="registration-form-box" class="bg-white p-10 rounded-[3rem] shadow-2xl border-4 border-blue-50 relative overflow-hidden font-sans">
                 <div class="flex items-center gap-8 border-b border-slate-100 pb-8 mb-10 text-[#1e3a8a] font-sans">
-                    <div id="reg-level" class="w-20 h-20 rounded-3xl ocean-gradient text-white font-black flex items-center justify-center text-3xl shadow-xl font-sans text-center">初階</div>
+                    <div id="reg-level" class="w-20 h-20 rounded-3xl ocean-gradient text-white font-black flex items-center justify-center text-3xl shadow-xl font-sans">初階</div>
                     <div class="flex-1 font-sans">
-                        <p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2 italic font-sans">Selected Chapter</p>
-                        <h4 id="reg-title" class="text-2xl font-black leading-tight mb-2 serif font-sans">海岸公民練習曲</h4>
+                        <p class="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-2 italic">Selected Chapter</p>
+                        <h4 id="reg-title" class="text-2xl font-black leading-tight mb-2 serif font-sans text-[#1e3a8a]">海岸公民練習曲</h4>
                         <div class="flex gap-6 text-sm font-bold opacity-60 font-sans"><p class="flex items-center gap-2 font-sans"><i data-lucide="calendar" class="w-4 h-4 font-sans"></i> 5/2 (六)</p><p class="flex items-center gap-2 font-sans"><i data-lucide="map-pin" class="w-4 h-4 font-sans"></i> 外木山沙灘</p></div>
                     </div>
                 </div>
-                <form onsubmit="submitForm(event)" class="space-y-12 text-stone-900 font-sans text-[#1e3a8a]">
-                    <div class="space-y-8 font-sans">
-                        <div class="flex items-center gap-3 text-[#1e3a8a] font-sans"><div class="w-3 h-8 bg-blue-500 rounded-full"></div><p class="text-sm font-black uppercase tracking-widest font-sans">個人基本資料</p></div>
+                <form onsubmit="submitForm(event)" class="space-y-12 text-stone-900 font-sans">
+                    <div class="space-y-8 font-sans text-[#1e3a8a]">
+                        <div class="flex items-center gap-3 text-[#1e3a8a] font-sans font-sans"><div class="w-3 h-8 bg-blue-500 rounded-full font-sans"></div><p class="text-sm font-black uppercase tracking-widest font-sans">個人基本資料</p></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 font-sans">
-                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 font-sans uppercase">姓名 *</label><input required type="text" id="form-name" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans"></div>
-                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 font-sans uppercase">身分證字號 *</label><input required type="text" id="form-id" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans"></div>
-                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 font-sans uppercase">聯絡電話 *</label><input required type="tel" id="form-phone" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans"></div>
-                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 font-sans uppercase">常用的 Email *</label><input required type="email" id="form-email" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans"></div>
+                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 uppercase font-sans">姓名 *</label><input required type="text" id="form-name" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans text-[#1e3a8a]"></div>
+                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 uppercase font-sans">身分證字號 *</label><input required type="text" id="form-id" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans text-[#1e3a8a]"></div>
+                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 uppercase font-sans">聯絡電話 *</label><input required type="tel" id="form-phone" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans text-[#1e3a8a]"></div>
+                            <div class="space-y-2 font-sans"><label class="text-xs font-black text-slate-400 uppercase font-sans">常用的 Email *</label><input required type="email" id="form-email" class="w-full bg-slate-50 border-2 border-transparent focus:border-blue-500 p-4 font-bold rounded-2xl outline-none shadow-inner transition-all font-sans text-[#1e3a8a]"></div>
                         </div>
                     </div>
-                    <div class="bg-blue-50 p-8 rounded-[2rem] border-l-8 border-blue-500 shadow-sm text-[#1e3a8a] font-sans font-bold"><label class="flex items-start gap-4 cursor-pointer select-none font-sans"><input required type="checkbox" class="mt-1.5 w-6 h-6 accent-[#1e3a8a] shrink-0 font-sans" /><span class="text-sm leading-relaxed italic font-sans font-bold text-[#1e3a8a]">我已詳閱規則，願意投入守護行列並實踐環境承諾。</span></label></div>
+                    <div class="bg-blue-50 p-8 rounded-[2rem] border-l-8 border-blue-500 shadow-sm text-[#1e3a8a] font-sans"><label class="flex items-start gap-4 cursor-pointer select-none font-sans font-bold"><input required type="checkbox" class="mt-1.5 w-6 h-6 accent-[#1e3a8a] shrink-0 font-sans" /><span class="text-sm leading-relaxed italic font-sans font-bold">我已詳閱規則，願意投入守護行列並實踐環境承諾。</span></label></div>
                     <button type="submit" id="submit-btn" class="w-full py-6 ocean-gradient text-white font-black uppercase tracking-[0.2em] text-xl rounded-3xl shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-4 active:scale-95 font-sans">
                         <i data-lucide="sparkles" class="w-6 h-6"></i> 授權並提交契約
                     </button>
@@ -255,38 +248,58 @@
             </section>
         </div>
 
-        <!-- 管理端 -->
+        <!-- ✨ 守護者數據管理端 (Admin View) -->
         <div id="view-admin" class="tab-view hidden space-y-12 pb-32 animate-in fade-in text-[#1e3a8a] font-sans">
+            
+            <!-- 管理者金鑰驗證 -->
             <div id="admin-auth-gate" class="flex flex-col items-center justify-center py-20 animate-in zoom-in-95 font-sans">
                 <div class="p-8 bg-white rounded-[2.5rem] shadow-2xl border border-blue-50 w-full max-w-sm text-center font-sans text-[#1e3a8a]">
-                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 font-sans"><i data-lucide="lock" class="text-blue-500"></i></div>
-                    <h3 class="text-xl font-black mb-2 serif text-[#1e3a8a]">管理者金鑰驗證</h3>
-                    <p class="text-[10px] text-slate-400 mb-8 uppercase tracking-[0.3em] font-sans">Guardian Access Portal</p>
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 font-sans font-sans"><i data-lucide="lock" class="text-blue-500 font-sans"></i></div>
+                    <h3 class="text-xl font-black mb-2 serif font-sans">管理者金鑰驗證</h3>
+                    <p class="text-[10px] text-slate-400 mb-8 uppercase tracking-[0.3em] font-sans">Master Access Gate</p>
                     <input type="password" id="admin-key-input" placeholder="請輸入金鑰..." class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 rounded-xl font-bold text-center outline-none transition-all mb-4 font-sans tracking-[0.5em]">
-                    <div id="auth-error" class="hidden text-[10px] text-red-500 font-black mb-4 font-sans italic">解析失敗，請重新輸入</div>
+                    <div id="auth-error" class="hidden text-[10px] text-red-500 font-black mb-4 font-sans italic">金鑰錯誤，無法讀取數據</div>
                     <button onclick="authenticateAdmin()" class="w-full py-3 ocean-gradient text-white font-black rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all font-sans text-xs uppercase tracking-widest font-sans">解鎖數據中心</button>
                 </div>
             </div>
 
+            <!-- 數據管理主面板 -->
             <div id="admin-main-panel" class="hidden space-y-12 font-sans text-[#1e3a8a]">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-8 border-b-2 border-slate-100 pb-8 font-sans">
-                    <div class="font-sans"><h3 class="text-3xl font-black italic serif font-sans">數據彙整平台 / Aggregation</h3><p class="opacity-60 text-sm mt-2 font-medium font-sans">外木山守護者之數位報名清冊彙總</p></div>
-                    <div class="flex gap-4 font-sans text-[#1e3a8a]">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-8 border-b-2 border-slate-100 pb-8 font-sans">
+                    <div class="font-sans text-[#1e3a8a]"><h3 class="text-3xl font-black italic serif font-sans">數據彙整平台 / Hub</h3><p class="opacity-60 text-sm mt-2 font-medium font-sans">外木山守護者之數位報名清冊分流系統</p></div>
+                    <div class="flex flex-wrap gap-4 font-sans text-[#1e3a8a]">
                         <button onclick="deauthenticateAdmin()" class="px-6 py-3 border-2 border-slate-200 text-slate-400 rounded-full font-black text-[10px] uppercase tracking-widest hover:border-red-200 hover:text-red-400 transition-all font-sans">登出</button>
-                        <button onclick="exportAllToExcel()" class="px-8 py-3 bg-[#1e3a8a] text-white rounded-full font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-sans"><i data-lucide="file-spreadsheet" class="w-4 h-4 font-sans"></i> 匯出報名清冊</button>
+                        <div class="flex items-center bg-white border border-blue-100 rounded-full px-4 py-1 shadow-sm">
+                            <i data-lucide="filter" class="w-4 h-4 text-blue-500 mr-2"></i>
+                            <select id="export-selector" class="bg-transparent text-xs font-black outline-none py-2 cursor-pointer" onchange="renderAdminTable()">
+                                <option value="all">彙整全部活動數據</option>
+                                <option value="01">場次 #01 海岸公民練習曲</option>
+                                <option value="02">場次 #02 海岸變奏曲</option>
+                                <option value="03">場次 #03 海岸安全課</option>
+                                <option value="04">場次 #04 海岸判讀課</option>
+                                <option value="05">場次 #05 海岸守護課</option>
+                                <option value="06">場次 #06 海味體驗課</option>
+                                <option value="07">場次 #07 海味探索課</option>
+                                <option value="08">場次 #08 海洋文化課</option>
+                                <option value="09">場次 #09 海岸治理(LNT)</option>
+                                <option value="10">場次 #10 海岸治理(共管)</option>
+                            </select>
+                        </div>
+                        <button onclick="exportCurrentToExcel()" class="px-8 py-3 bg-[#1e3a8a] text-white rounded-full font-black text-xs uppercase tracking-widest shadow-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-sans"><i data-lucide="file-spreadsheet" class="w-4 h-4 font-sans"></i> 匯出當前清冊</button>
                     </div>
                 </div>
+
                 <div class="bg-white rounded-[2.5rem] shadow-2xl border border-blue-50 overflow-hidden font-sans">
                     <div class="overflow-x-auto custom-scrollbar font-sans text-[#1e3a8a]">
                         <table class="w-full text-left text-sm font-sans border-collapse text-[#1e3a8a]">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-100 font-sans text-[#1e3a8a]">
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">行動場次</th>
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">姓名</th>
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">身分證字號</th>
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">電話</th>
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">Email</th>
-                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans">登記時間</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">場次代碼</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">守護者姓名</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">身分證字號</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">電話</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">常用的 Email</th>
+                                    <th class="p-6 font-black uppercase text-[10px] tracking-widest text-slate-400 font-sans text-[#1e3a8a]">登記時間</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-table-body" class="font-sans text-[#1e3a8a]"></tbody>
@@ -298,11 +311,9 @@
 
     </main>
 
-    <footer class="w-full py-12 bg-white text-center border-t border-blue-50 mt-20 font-sans text-[#1e3a8a]">
-        <div class="flex justify-center gap-10 mb-6 opacity-40">
-            <i data-lucide="heart"></i><i data-lucide="waves"></i><i data-lucide="sun"></i>
-        </div>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] font-sans italic">Island Dwellers Studio // Gorgeous Transformation // v4.6.4</p>
+    <footer class="w-full py-12 bg-white text-center border-t border-blue-50 mt-20 font-sans">
+        <div class="flex justify-center gap-10 mb-6 opacity-40 text-[#1e3a8a] font-sans text-[#1e3a8a]"><i data-lucide="heart" class="font-sans text-[#1e3a8a]"></i><i data-lucide="waves" class="font-sans text-[#1e3a8a]"></i><i data-lucide="sun" class="font-sans text-[#1e3a8a]"></i></div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] font-sans italic text-[#1e3a8a]">Island Dwellers Studio // Gorgeous Transformation // v4.7.0</p>
     </footer>
 
     <script>
@@ -314,9 +325,12 @@
 
         const MASTER_GUARDIAN_KEY = "80073052";
 
+        // 模擬數據庫 (包含多場次模擬資料以供測試)
         let registrationDatabase = [
             { questId: '01', questTitle: '海岸公民練習曲', name: '林嘿路', id: 'A123456789', phone: '0912-345-678', email: 'hello@island.com', timestamp: '2026-03-24 09:12' },
-            { questId: '01', questTitle: '海岸公民練習曲', name: '陳小海', id: 'B222333444', phone: '0933-111-222', email: 'ocean@sea.org', timestamp: '2026-03-24 10:45' }
+            { questId: '01', questTitle: '海岸公民練習曲', name: '陳小海', id: 'B222333444', phone: '0933-111-222', email: 'ocean@sea.org', timestamp: '2026-03-24 10:45' },
+            { questId: '02', questTitle: '海岸變奏曲', name: '王環境', id: 'C333444555', phone: '0955-000-111', email: 'eco@earth.tw', timestamp: '2026-03-24 11:20' },
+            { questId: '05', questTitle: '海岸守護課', name: '張救生', id: 'D444555666', phone: '0966-222-333', email: 'sos@beach.net', timestamp: '2026-03-24 14:05' }
         ];
 
         function toggleMenu() {
@@ -344,28 +358,19 @@
             const activeNav = document.getElementById(`nav-${tabId}`);
             if(activeNav) activeNav.classList.remove('opacity-50');
             
-            if(tabId === 'admin') {
-                if(!isAdminAuthenticated) {
-                    document.getElementById('admin-auth-gate').classList.remove('hidden');
-                    document.getElementById('admin-main-panel').classList.add('hidden');
-                } else {
-                    renderAdminTable();
-                }
-            }
+            if(tabId === 'admin' && isAdminAuthenticated) renderAdminTable();
             window.scrollTo(0, 0);
         }
 
         function authenticateAdmin() {
             const keyInput = document.getElementById('admin-key-input').value;
-            const errorMsg = document.getElementById('auth-error');
             if(keyInput === MASTER_GUARDIAN_KEY) {
                 isAdminAuthenticated = true;
-                errorMsg.classList.add('hidden');
                 document.getElementById('admin-auth-gate').classList.add('hidden');
                 document.getElementById('admin-main-panel').classList.remove('hidden');
                 renderAdminTable();
             } else {
-                errorMsg.classList.remove('hidden');
+                document.getElementById('auth-error').classList.remove('hidden');
                 document.getElementById('admin-key-input').value = "";
             }
         }
@@ -405,20 +410,20 @@
             if(!container) return;
             container.innerHTML = questData.map(q => `
                 <div class="relative rounded-[2.5rem] border-2 transition-all duration-500 overflow-hidden flex flex-col min-h-[420px] ${q.isOpen ? 'bg-white border-blue-50 shadow-xl hover:border-blue-500' : 'bg-slate-100 opacity-60 grayscale cursor-not-allowed'}">
-                    ${!q.isOpen ? '<div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex flex-col items-center justify-center z-20 font-sans"><i data-lucide="lock" class="text-slate-400 mb-2 font-sans"></i><span class="text-[10px] font-black uppercase tracking-widest text-slate-500 font-sans italic">Locked</span></div>' : ''}
-                    <div class="p-8 flex flex-col flex-1 font-sans">
-                        <div class="flex justify-between items-start mb-6 font-sans">
-                            <span class="px-4 py-1 rounded-full text-[10px] font-black border-2 ${q.isOpen ? 'border-blue-500 text-blue-500' : 'border-slate-300 text-slate-400'}">${q.level}</span>
-                            <span class="text-[10px] font-bold text-slate-400 font-mono italic">#${q.id}</span>
+                    ${!q.isOpen ? '<div class="absolute inset-0 bg-white/40 backdrop-blur-[2px] flex flex-col items-center justify-center z-20 font-sans text-[#1e3a8a]"><i data-lucide="lock" class="text-slate-400 mb-2 font-sans text-[#1e3a8a]"></i><span class="text-[10px] font-black uppercase tracking-widest text-slate-500 font-sans italic text-[#1e3a8a]">Locked</span></div>' : ''}
+                    <div class="p-8 flex flex-col flex-1 font-sans text-[#1e3a8a]">
+                        <div class="flex justify-between items-start mb-6 font-sans text-[#1e3a8a]">
+                            <span class="px-4 py-1 rounded-full text-[10px] font-black border-2 ${q.isOpen ? 'border-blue-500 text-blue-500 font-sans text-[#1e3a8a]' : 'border-slate-300 text-slate-400 font-sans text-[#1e3a8a]'} font-sans text-[#1e3a8a]">${q.level}</span>
+                            <span class="text-[10px] font-bold text-slate-400 font-mono italic font-sans text-[#1e3a8a]">#${q.id}</span>
                         </div>
-                        <h4 class="text-xl font-black leading-tight mb-4 text-[#1e3a8a] font-sans ${!q.isOpen ? 'opacity-40' : ''}">${q.title}</h4>
-                        <div class="space-y-2 mb-8 text-slate-500 text-xs font-bold font-sans">
-                            <p class="flex items-center gap-2 font-sans"><i data-lucide="clock" class="w-4 h-4 text-blue-400 font-sans"></i> ${q.time}</p>
-                            <p class="flex items-start gap-2 font-sans"><i data-lucide="map-pin" class="w-4 h-4 text-blue-400 font-sans"></i> ${q.location}</p>
+                        <h4 class="text-xl font-black leading-tight mb-4 text-[#1e3a8a] font-sans ${!q.isOpen ? 'opacity-40' : ''} font-sans text-[#1e3a8a]">${q.title}</h4>
+                        <div class="space-y-2 mb-8 text-slate-500 text-xs font-bold font-sans text-[#1e3a8a]">
+                            <p class="flex items-center gap-2 font-sans text-[#1e3a8a]"><i data-lucide="clock" class="w-4 h-4 text-blue-400 font-sans text-[#1e3a8a]"></i> ${q.time}</p>
+                            <p class="flex items-start gap-2 font-sans text-[#1e3a8a]"><i data-lucide="map-pin" class="w-4 h-4 text-blue-400 font-sans text-[#1e3a8a]"></i> ${q.location}</p>
                         </div>
-                        <div class="mt-auto flex justify-between items-center pt-6 border-t border-slate-50 font-sans">
-                            <span class="text-lg font-black text-blue-900 font-sans font-bold tracking-tighter">${q.isOpen ? q.reward : '---'}</span>
-                            <button ${!q.isOpen ? 'disabled' : `onclick="openRegistration('${q.id}')"`} class="px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all font-sans ${q.isOpen ? 'ocean-gradient text-white shadow-lg' : 'bg-slate-300 text-white'}">
+                        <div class="mt-auto flex justify-between items-center pt-6 border-t border-slate-50 font-sans text-[#1e3a8a]">
+                            <span class="text-lg font-black text-blue-900 font-sans text-[#1e3a8a] font-bold tracking-tighter">${q.isOpen ? q.reward : '---'}</span>
+                            <button ${!q.isOpen ? 'disabled' : `onclick="openRegistration('${q.id}')"`} class="px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest transition-all font-sans text-[#1e3a8a] ${q.isOpen ? 'ocean-gradient text-white shadow-lg' : 'bg-slate-300 text-white'}">
                                 ${q.isOpen ? '我要報名' : '尚未開啟'}
                             </button>
                         </div>
@@ -440,7 +445,7 @@
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin font-sans"></i> 同步靈脈中...';
+            btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin font-sans text-[#1e3a8a]"></i> 同步靈脈中...';
             lucide.createIcons();
             
             const newRecord = {
@@ -460,11 +465,24 @@
             }, 1500);
         }
 
+        // --- 行政數據引擎 2.0 (分流渲染與匯出) ---
         function renderAdminTable() {
             const body = document.getElementById('admin-table-body');
-            body.innerHTML = registrationDatabase.map(data => `
+            const filterId = document.getElementById('export-selector').value;
+            
+            // 根據選取的場次進行過濾
+            const filteredData = filterId === 'all' 
+                ? registrationDatabase 
+                : registrationDatabase.filter(d => d.questId === filterId);
+
+            if(filteredData.length === 0) {
+                body.innerHTML = `<tr><td colspan="6" class="p-12 text-center text-slate-300 italic">目前無符合條件之守護者數據</td></tr>`;
+                return;
+            }
+
+            body.innerHTML = filteredData.map(data => `
                 <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors font-sans text-[#1e3a8a]">
-                    <td class="p-6 font-sans"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-black">${data.questId}</span> <span class="font-bold ml-2 serif">${data.questTitle}</span></td>
+                    <td class="p-6 font-sans"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-black">#${data.questId}</span></td>
                     <td class="p-6 font-black font-sans">${data.name}</td>
                     <td class="p-6 font-mono text-xs font-sans">${data.id}</td>
                     <td class="p-6 font-mono text-xs font-sans">${data.phone}</td>
@@ -474,16 +492,33 @@
             `).join('');
         }
 
-        function exportAllToExcel() {
-            let csvContent = "\ufeff行動場次,守護者姓名,身分證字號,聯絡電話,Email,登記時間\n";
-            registrationDatabase.forEach(data => {
-                csvContent += `${data.questId},${data.name},${data.id},${data.phone},${data.email},${data.timestamp}\n`;
+        function exportCurrentToExcel() {
+            const filterId = document.getElementById('export-selector').value;
+            const filterName = document.getElementById('export-selector').options[document.getElementById('export-selector').selectedIndex].text;
+            
+            const filteredData = filterId === 'all' 
+                ? registrationDatabase 
+                : registrationDatabase.filter(d => d.questId === filterId);
+
+            if(filteredData.length === 0) {
+                alert("位面提示：當前選取之場次暫無數據，無法生成報名清冊。");
+                return;
+            }
+
+            // CSV 構建
+            let csvContent = "\ufeff場次代碼,活動主題,守護者姓名,身分證字號,聯絡電話,Email,登記時間\n";
+            filteredData.forEach(data => {
+                csvContent += `${data.questId},${data.questTitle},${data.name},${data.id},${data.phone},${data.email},${data.timestamp}\n`;
             });
+
+            // 下載驅動
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
+            const fileName = filterId === 'all' ? "外木山華麗轉身_全部數據" : `外木山華麗轉身_${filterName}`;
+            
             link.setAttribute("href", url);
-            link.setAttribute("download", `外木山華麗轉身_數據彙整_${new Date().toLocaleDateString()}.csv`);
+            link.setAttribute("download", `${fileName}_${new Date().toLocaleDateString()}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
