@@ -95,7 +95,7 @@
                     <i data-lucide="waves" class="text-blue-500 w-32 h-32 opacity-80"></i>
                 </div>
             </div>
-            <div class="text-center space-y-4 font-sans">
+            <div class="text-center space-y-4 font-sans text-[#1e3a8a]">
                 <h1 class="text-4xl md:text-6xl font-black tracking-tight font-sans">【海好有你】<br/><span class="text-blue-500 font-sans">外木山沙灘的華麗轉身</span></h1>
                 <p class="text-slate-500 font-medium tracking-[0.3em] uppercase text-sm italic font-sans">Co-Creation Hub for Coastal Design</p>
             </div>
@@ -108,11 +108,11 @@
                 <div class="px-8 py-3 bg-white border border-blue-100 rounded-full font-bold shadow-sm flex items-center gap-3 text-[#1e3a8a]">
                     <i data-lucide="user" class="text-blue-500"></i> 海岸設計師：<span id="display-name" class="text-blue-600 font-black"></span>
                 </div>
-                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full uppercase font-sans">親見共創計畫</button>
+                <button onclick="switchTab('quests')" class="px-16 py-5 ocean-gradient text-white font-black rounded-full shadow-2xl hover:brightness-110 transition-all text-lg tracking-[0.1em] w-full uppercase">親見共創計畫</button>
             </div>
         </div>
 
-        <!-- 2. 守護行動 (動態日期與感測) -->
+        <!-- 2. 守護行動 -->
         <div id="view-quests" class="tab-view hidden space-y-12 animate-in slide-in-from-bottom-10 font-sans">
             <div class="flex flex-col xl:flex-row justify-between items-end gap-8 border-b border-blue-100 pb-10">
                 <div class="text-center md:text-left">
@@ -152,7 +152,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 font-sans text-[#1e3a8a]" id="quest-container"></div>
         </div>
 
-        <!-- 3. 生態手冊：文字敘事復原 -->
+        <!-- 3. ✨ 生態手冊：完整敘事復原 (包含 3.4. 章節) -->
         <div id="view-handbook" class="tab-view hidden space-y-20 pb-32 animate-in fade-in font-sans text-[#1e3a8a]">
             <div class="text-center space-y-6">
                 <i data-lucide="sun" class="w-16 h-16 mx-auto text-amber-500 opacity-80 font-sans"></i>
@@ -169,17 +169,37 @@
                 </p>
             </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 font-sans">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 font-sans text-[#1e3a8a]">
+                <!-- 1. 守護者宣言 -->
                 <div class="p-10 bg-white rounded-[3rem] shadow-xl border-t-8 border-blue-500 flex flex-col gap-6">
-                    <div class="flex items-center gap-3 text-blue-600 font-sans"><i data-lucide="shield-check" class="w-6 h-6"></i><h5 class="text-xl font-black serif">1. 守護者宣言</h5></div>
+                    <div class="flex items-center gap-3 text-blue-600 font-sans"><i data-lucide="shield-check" class="w-6 h-6 font-sans"></i><h5 class="text-xl font-black serif">1. 守護者宣言</h5></div>
                     <p class="text-sm leading-loose italic serif opacity-90 border-l-4 border-blue-50 pl-6">我願意用尊重的方式接近海岸，用觀察代替打擾，用理解代替佔有，讓今天的到來，不成為這片沙灘的負擔。</p>
                 </div>
+
+                <!-- 2. 海岸小提醒 -->
                 <div class="p-10 bg-white rounded-[3rem] shadow-xl border-t-8 border-emerald-500 flex flex-col gap-6 font-sans">
-                    <div class="flex items-center gap-3 text-emerald-600 font-sans"><i data-lucide="info" class="w-6 h-6"></i><h5 class="text-xl font-black serif">2. 海岸小提醒</h5></div>
+                    <div class="flex items-center gap-3 text-emerald-600 font-sans"><i data-lucide="info" class="w-6 h-6 font-sans"></i><h5 class="text-xl font-black serif">2. 海岸小提醒</h5></div>
                     <p class="text-sm leading-loose italic serif opacity-90 border-l-4 border-emerald-50 pl-6">海的禮貌，是看見而不打擾。石頭翻得起，也要放得回。不是每個發現都要帶走。最好的紀念品是學會守護的方法。</p>
+                </div>
+
+                <!-- 3. 自然的提醒 (復原) -->
+                <div class="p-10 bg-white rounded-[3rem] shadow-xl border-t-8 border-amber-500 flex flex-col gap-6 font-sans">
+                    <div class="flex items-center gap-3 text-amber-600 font-sans"><i data-lucide="wind" class="w-6 h-6 font-sans"></i><h5 class="text-xl font-black serif">3. 自然的提醒</h5></div>
+                    <p class="text-sm leading-loose italic serif opacity-90 border-l-4 border-amber-50 pl-6 text-[#1e3a8a]">
+                        海邊的天氣，說變就變。浪看起來平靜，不代表沒有力量。退潮讓人更靠近海岸，也可能讓人忽略回程的時間。風、浪、雨、潮汐，都是自然給我們的提醒。來到海邊，先尊重大海的節奏，再享受沙灘的美好。
+                    </p>
+                </div>
+
+                <!-- 4. 安全小提醒 (復原) -->
+                <div class="p-10 bg-white rounded-[3rem] shadow-xl border-t-8 border-red-500 flex flex-col gap-6 font-sans">
+                    <div class="flex items-center gap-3 text-red-600 font-sans"><i data-lucide="alert-triangle" class="w-6 h-6 font-sans"></i><h5 class="text-xl font-black serif font-sans">4. 安全小提醒</h5></div>
+                    <p class="text-sm leading-loose italic serif opacity-90 border-l-4 border-red-50 pl-6">
+                        出發前，先看天氣，也看海況。風太大、浪太高、天色轉暗時，不要勉強停留。不要獨自走向太靠近海浪的地方，也不要小看濕滑礁岩的危險。有時候，最安靜的海面，也藏著最需要小心的力量。平安回家更重要。
+                    </p>
                 </div>
             </div>
 
+            <!-- 5. 離開前 -->
             <section class="max-w-3xl mx-auto p-12 ocean-gradient rounded-[3rem] shadow-2xl text-white text-center space-y-6 font-sans">
                 <h4 class="text-2xl font-black serif italic text-white font-sans">5. 離開前，留下一個更好的沙灘</h4>
                 <p class="text-sm leading-loose font-bold serif opacity-95 text-white font-sans">
@@ -187,17 +207,24 @@
                     當你離開時，讓這片沙灘比你來的時候更乾淨、更安全，也更值得下一個人好好珍惜。
                 </p>
             </section>
+
+            <!-- 地圖位面 -->
+            <section class="space-y-10 px-4 font-sans text-[#1e3a8a]">
+                <div class="bg-white p-3 rounded-[3.5rem] shadow-2xl border border-blue-50 relative overflow-hidden group font-sans">
+                    <iframe id="google-map" title="大武崙白沙灘" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1805.9351!2d121.7067944!3d25.1656071!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x345d4c3266659627%3A0xea5db9ca8e5767c2!2z5aSn5q2m5Yqx55m95rKZ54GY!5e0!3m2!1szh-TW!2stw!4v1711252000000!5m2!1szh-TW!2stw" class="w-full h-[450px] border-none rounded-[2.5rem] opacity-95 transition-all duration-700 grayscale-[0.1] contrast-110 group-hover:grayscale-0 font-sans" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </section>
         </div>
 
         <!-- 4. 報名契約 (Registration)：✨ 資產復原與字體放大版 ✨ -->
         <div id="view-registration" class="tab-view hidden space-y-12 animate-in slide-in-from-right-10 pb-24 text-[#1e3a8a] font-sans">
             <div class="flex items-center gap-6 font-sans">
                 <button onclick="switchTab('quests')" class="p-4 bg-white text-blue-500 rounded-full shadow-lg border border-blue-50 hover:bg-blue-50 transition-all font-sans"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
-                <div><h3 class="text-4xl font-black italic serif text-[#1e3a8a]">華麗轉身：行動契約</h3><p class="text-sm opacity-60 font-black uppercase tracking-widest font-sans text-[#1e3a8a]">Digital Registration Protocol v5.1.1</p></div>
+                <div><h3 class="text-4xl font-black italic serif text-[#1e3a8a]">華麗轉身：行動契約</h3><p class="text-sm opacity-60 font-black uppercase tracking-widest font-sans text-[#1e3a8a]">Digital Registration Protocol v5.1.2</p></div>
             </div>
             
             <section id="registration-form-box" class="space-y-12 font-sans">
-                <!-- ✨ 復原：工作坊詳細資訊磁貼 (v4.9.5 版本) -->
+                <!-- 復原：工作坊詳細資訊磁貼 -->
                 <div class="bg-white p-12 rounded-[3.5rem] shadow-2xl border-4 border-blue-50 text-[#1e3a8a]">
                     <div class="flex items-center gap-8 border-b border-slate-100 pb-10 mb-10 text-[#1e3a8a]">
                         <div id="reg-level" class="w-24 h-24 rounded-3xl ocean-gradient text-white font-black flex items-center justify-center text-4xl shadow-xl uppercase font-sans">初階</div>
@@ -211,7 +238,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 font-sans text-[#1e3a8a]">
                         <div class="space-y-10 font-sans">
                             <div class="space-y-6 font-sans">
-                                <h5 class="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-3 font-sans font-sans"><i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i> 活動亮點：實地診斷 × 創意設計</h5>
+                                <h5 class="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-3 font-sans"><i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i> 活動亮點：實地診斷 × 創意設計</h5>
                                 <div class="grid grid-cols-1 gap-6 font-sans text-[#1e3a8a]">
                                     <div class="p-8 bg-blue-50/60 rounded-[2.5rem] border border-blue-100 shadow-sm font-sans transition-all hover:bg-blue-50">
                                         <p class="font-black text-xl mb-3 flex items-center gap-2 text-[#1e3a8a] font-sans"><i data-lucide="scan-eye" class="text-blue-500 font-sans"></i> 【上午：感官場勘】</p>
@@ -219,7 +246,7 @@
                                     </div>
                                     <div class="p-8 bg-emerald-50/60 rounded-[2.5rem] border border-emerald-100 shadow-sm font-sans transition-all hover:bg-emerald-50">
                                         <p class="font-black text-xl mb-3 flex items-center gap-2 text-[#1e3a8a] font-sans"><i data-lucide="pencil-ruler" class="text-emerald-600 font-sans"></i> 【下午：共創工作坊】</p>
-                                        <p class="text-base opacity-80 leading-relaxed font-sans">回到德育校內空間。創意激盪，組合力產出未來可執行的海岸教育活動草案。</p>
+                                        <p class="text-base opacity-80 leading-relaxed font-sans">回到德育校內空間。創意激盪，組合力產出未來可執行的海岸教育草案。</p>
                                     </div>
                                 </div>
                             </div>
@@ -240,10 +267,10 @@
                                     <tbody class="font-sans text-[#1e3a8a]">
                                         <tr class="border-b border-slate-50"><td class="p-5 font-mono">09:30–09:50</td><td class="p-5 font-bold font-sans">集合簽到 / 領取手冊</td><td class="p-5 font-sans">外木山沙灘</td></tr>
                                         <tr class="border-b border-slate-50"><td class="p-5 font-bold text-blue-600 font-sans">09:50–12:00</td><td class="p-5 font-bold text-blue-600 font-sans">場域診斷與五感觀察</td><td class="p-5 font-sans">外木山沙灘</td></tr>
-                                        <tr class="border-b border-slate-50 bg-amber-50/20"><td class="p-5 font-mono text-amber-700">12:00–13:30</td><td class="p-5 font-bold text-amber-800 font-sans">午餐休息與位面移動</td><td class="p-5 text-amber-800 font-bold font-sans">德育校區</td></tr>
-                                        <tr class="border-b border-slate-50 font-sans"><td class="p-5 font-mono">13:30–14:30</td><td class="p-5 font-bold font-sans">議題解析：看到了什麼？</td><td class="p-5 font-sans">德育校區</td></tr>
-                                        <tr class="border-b border-slate-50 font-sans"><td class="p-5 font-bold text-emerald-600 font-sans">14:30–15:30</td><td class="p-5 font-bold text-emerald-600 font-sans">腦力激盪：創意活動設計</td><td class="p-5 font-sans">德育校區</td></tr>
-                                        <tr class="font-sans"><td class="p-5 font-mono">15:30–16:30</td><td class="p-5 font-bold font-sans text-blue-600">成果發表與賦歸證明</td><td class="p-5 font-sans">德育校區</td></tr>
+                                        <tr class="border-b border-slate-50 bg-amber-50/20 font-sans text-[#1e3a8a]"><td class="p-5 font-mono text-amber-700">12:00–13:30</td><td class="p-5 font-bold text-amber-800 font-sans">午餐休息與位面移動</td><td class="p-5 text-amber-800 font-bold font-sans">德育校區</td></tr>
+                                        <tr class="border-b border-slate-50 font-sans text-[#1e3a8a]"><td class="p-5 font-mono">13:30–14:30</td><td class="p-5 font-bold font-sans">議題解析：看到了什麼？</td><td class="p-5 font-sans">德育校區</td></tr>
+                                        <tr class="border-b border-slate-50 font-sans text-[#1e3a8a]"><td class="p-5 font-bold text-emerald-600 font-sans">14:30–15:30</td><td class="p-5 font-bold text-emerald-600 font-sans">腦力激盪：創意活動設計</td><td class="p-5 font-sans">德育校區</td></tr>
+                                        <tr class="font-sans text-[#1e3a8a]"><td class="p-5 font-mono">15:30–16:30</td><td class="p-5 font-bold font-sans text-blue-600">成果發表與賦歸證明</td><td class="p-5 font-sans">德育校區</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -251,7 +278,7 @@
                     </div>
                 </div>
 
-                <!-- ✨ 復原：完整的 11 項行政報名欄位 ✨ -->
+                <!-- ✨ 復原：完整的 10 項行政報名欄位 (已移除研習時數) ✨ -->
                 <div class="bg-white p-12 rounded-[3.5rem] shadow-2xl border-4 border-blue-50 font-sans text-[#1e3a8a]">
                     <form onsubmit="submitForm(event)" class="space-y-16">
                         <div class="space-y-10">
@@ -316,7 +343,7 @@
             </div>
             <div id="admin-main-panel" class="hidden space-y-12 font-sans text-[#1e3a8a]">
                 <div class="flex flex-col md:flex-row justify-between items-start gap-8 border-b-2 border-slate-100 pb-8 font-sans text-[#1e3a8a]">
-                    <div class="font-sans text-[#1e3a8a]"><h3 class="text-3xl font-black italic serif font-sans text-[#1e3a8a]">行政中樞 / Hub</h3><p class="opacity-60 text-sm mt-2 font-medium font-sans text-[#1e3a8a]">數據清冊系統 (v5.1.1)</p></div>
+                    <div class="font-sans text-[#1e3a8a]"><h3 class="text-3xl font-black italic serif font-sans text-[#1e3a8a]">行政中樞 / Hub</h3><p class="opacity-60 text-sm mt-2 font-medium font-sans text-[#1e3a8a]">數據清冊系統 (v5.1.2)</p></div>
                     <div class="flex flex-wrap gap-4 font-sans text-[#1e3a8a]">
                         <button onclick="deauthenticateAdmin()" class="px-6 py-3 border-2 border-slate-200 text-slate-400 rounded-full font-black text-[10px] uppercase tracking-widest hover:text-red-500 font-sans">退出</button>
                         <select id="export-selector" class="bg-white border border-blue-100 rounded-full px-6 py-2 text-xs font-black outline-none cursor-pointer font-sans text-[#1e3a8a]" onchange="renderAdminTable()">
@@ -343,7 +370,7 @@
 
     <footer class="w-full py-16 bg-white text-center border-t border-blue-50 mt-20 font-sans text-[#1e3a8a]">
         <div class="flex justify-center gap-10 mb-8 opacity-40 text-[#1e3a8a] font-sans text-[#1e3a8a]"><i data-lucide="heart" class="font-sans text-[#1e3a8a]"></i><i data-lucide="waves" class="font-sans text-[#1e3a8a]"></i><i data-lucide="sun" class="font-sans text-[#1e3a8a]"></i></div>
-        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] font-sans italic text-center text-[#1e3a8a]">Island Dwellers Studio // v5.1.1 // Gorgeous Transformation</p>
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.4em] font-sans italic text-center text-[#1e3a8a]">Island Dwellers Studio // v5.1.2 // Gorgeous Transformation</p>
     </footer>
 
     <script>
@@ -358,7 +385,7 @@
             { questId: '01', questTitle: '「海岸公民練習曲」場域共創工作坊', name: '林嘿路', org: '嘿路島民工作室', job: '戰略顧問', phone: '0912345678', birth: '1990/01/01', id: 'A123456789', email: 'hello@island.tw', role: '講師/分享者', diet: '葷', consent: '是', timestamp: '2026-03-24 09:12' }
         ];
 
-        // 氣象引擎
+        // 氣候引擎
         const WEATHER_ASSETS = { sunny: "https://www.cwa.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/01.svg", partlyCloudy: "https://www.cwa.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/02.svg", cloudy: "https://www.cwa.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/04.svg", rain: "https://www.cwa.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/08.svg" };
         
         function generateDynamicForecast() {
@@ -482,7 +509,7 @@
             btn.disabled = true;
             btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin font-sans"></i> 同步靈脈中...';
             lucide.createIcons();
-            const newRecord = { questId: '01', questTitle: '「海岸公民練習曲」場域共創工作坊', name: document.getElementById('form-name').value, org: document.getElementById('form-org').value, job: document.getElementById('form-job').value, phone: document.getElementById('form-phone').value, email: document.getElementById('form-email').value, birth: document.getElementById('form-birth').value, id: document.getElementById('form-id').value, role: document.getElementById('form-role').value, diet: document.getElementById('form-diet').value, consent: document.getElementById('form-consent').checked ? "是" : "否", timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16) };
+            const newRecord = { questId: selectedQuest.id, questTitle: selectedQuest.title, name: document.getElementById('form-name').value, org: document.getElementById('form-org').value, job: document.getElementById('form-job').value, phone: document.getElementById('form-phone').value, email: document.getElementById('form-email').value, birth: document.getElementById('form-birth').value, id: document.getElementById('form-id').value, role: document.getElementById('form-role').value, diet: document.getElementById('form-diet').value, consent: document.getElementById('form-consent').checked ? "是" : "否", timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16) };
             registrationDatabase.unshift(newRecord);
             setTimeout(() => { document.getElementById('registration-form-box').classList.add('hidden'); document.getElementById('welcome-message').innerHTML = '<h2 class="text-4xl font-black text-emerald-600 font-sans">共創契約同步成功！</h2><p class="text-slate-500 italic mt-4 font-sans">設計師，5/2 09:30 我們在沙灘集合。</p>'; switchTab('hall'); }, 1500);
         }
